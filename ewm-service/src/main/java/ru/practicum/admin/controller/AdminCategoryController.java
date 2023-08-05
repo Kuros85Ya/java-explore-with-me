@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.admin.dto.AdminCategoryRequestDto;
-import ru.practicum.admin.dto.AdminCategoryResponseDto;
+import ru.practicum.common.dto.CommonCategoryResponseDto;
 import ru.practicum.admin.service.AdminCategoryService;
 
 import javax.validation.Valid;
@@ -16,12 +16,12 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class CategoryController {
+public class AdminCategoryController {
 
     private final AdminCategoryService service;
 
     @PostMapping("")
-    public AdminCategoryResponseDto addCategory(@RequestBody @Valid AdminCategoryRequestDto requestDto) {
+    public CommonCategoryResponseDto addCategory(@RequestBody @Valid AdminCategoryRequestDto requestDto) {
         log.info("Добавление категории администратором {}", requestDto);
         return service.addCategory(requestDto);
     }
@@ -33,7 +33,7 @@ public class CategoryController {
     }
 
     @PatchMapping("/{catId}")
-    public AdminCategoryResponseDto patchCategory(@PathVariable long catId, @RequestBody @Valid AdminCategoryRequestDto requestDto) {
+    public CommonCategoryResponseDto patchCategory(@PathVariable long catId, @RequestBody @Valid AdminCategoryRequestDto requestDto) {
         log.info("Изменение администратором категории {}, новое значение {}", catId, requestDto);
         return service.patchCategory(catId, requestDto);
     }

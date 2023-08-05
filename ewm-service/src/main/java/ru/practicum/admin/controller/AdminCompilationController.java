@@ -15,7 +15,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class CompilationController {
+public class AdminCompilationController {
 
     private final AdminCompilationService service;
 

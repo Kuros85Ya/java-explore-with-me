@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.admin.dto.*;
-import ru.practicum.admin.mapper.RequestMapper;
+import ru.practicum.common.mapper.RequestMapper;
 import ru.practicum.admin.service.AdminUsersService;
 
 import javax.validation.Valid;
@@ -18,12 +18,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class UserController {
+public class AdminUserController {
 
     private final AdminUsersService service;
 
     @GetMapping()
-    public List<SingleAdminUserResponse> getUsers(
+    public List<AdminSingleUserResponse> getUsers(
             @RequestParam List<Integer> ids,
             @RequestParam Integer from,
             @RequestParam Integer size) {

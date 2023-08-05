@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.admin.dto.AdminCategoryRequestDto;
-import ru.practicum.admin.dto.AdminCategoryResponseDto;
+import ru.practicum.common.dto.CommonCategoryResponseDto;
 
 @Service
 @RequiredArgsConstructor
@@ -12,7 +12,7 @@ import ru.practicum.admin.dto.AdminCategoryResponseDto;
 public class AdminCategoryServiceImpl implements AdminCategoryService {
 
     @Override
-    public AdminCategoryResponseDto addCategory(AdminCategoryRequestDto requestDto) {
+    public CommonCategoryResponseDto addCategory(AdminCategoryRequestDto requestDto) {
         return null;
     }
 
@@ -22,7 +22,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     }
 
     @Override
-    public AdminCategoryResponseDto patchCategory(Long catId, AdminCategoryRequestDto requestDto) {
+    public CommonCategoryResponseDto patchCategory(Long catId, AdminCategoryRequestDto requestDto) {
         return null;
     }
 }

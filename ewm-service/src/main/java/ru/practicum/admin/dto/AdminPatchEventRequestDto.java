@@ -1,7 +1,7 @@
 package ru.practicum.admin.dto;
 
 import lombok.Data;
-import ru.practicum.admin.enums.StateAction;
+import ru.practicum.common.enums.StateAction;
 
 @Data
 public class AdminPatchEventRequestDto {

@@ -1,10 +1,13 @@
-package ru.practicum.admin.dto;
+package ru.practicum.common.dto;
 
 import lombok.Data;
-import ru.practicum.admin.enums.State;
+import ru.practicum.admin.dto.AdminCategory;
+import ru.practicum.admin.dto.AdminEventInitiator;
+import ru.practicum.admin.dto.AdminEventLocation;
+import ru.practicum.common.enums.State;
 
 @Data
-public class SingleAdminEventResponse {
+public class CommonSingleEventResponse {
     String annotation;
     AdminCategory category;
     Long confirmedRequests;

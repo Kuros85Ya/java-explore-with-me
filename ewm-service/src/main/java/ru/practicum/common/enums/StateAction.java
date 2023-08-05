@@ -1,4 +1,4 @@
-package ru.practicum.admin.enums;
+package ru.practicum.common.enums;
 
 import org.springframework.core.convert.converter.Converter;
 

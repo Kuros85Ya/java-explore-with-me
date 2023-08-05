@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.admin.dto.AdminPatchEventRequestDto;
-import ru.practicum.admin.dto.SingleAdminEventResponse;
-import ru.practicum.admin.mapper.RequestMapper;
+import ru.practicum.common.dto.CommonSingleEventResponse;
+import ru.practicum.common.mapper.RequestMapper;
 import ru.practicum.admin.service.AdminEventService;
 
 import javax.validation.Valid;
@@ -19,12 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class EventController {
+public class AdminEventController {
 
     private final AdminEventService service;
 
     @GetMapping()
-    public List<SingleAdminEventResponse> getEvents(
+    public List<CommonSingleEventResponse> getEvents(
             @RequestParam List<Integer> users,
             @RequestParam List<String> states,
             @RequestParam List<Integer> categories,

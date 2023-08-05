@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.admin.dto.AdminUserRequestDto;
 import ru.practicum.admin.dto.AdminUserResponseDto;
-import ru.practicum.admin.dto.SingleAdminUserResponse;
+import ru.practicum.admin.dto.AdminSingleUserResponse;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
 public class AdminUserServiceImpl implements AdminUsersService {
 
     @Override
-    public List<SingleAdminUserResponse> getUsers(List<Integer> ids, PageRequest pageRequest) {
+    public List<AdminSingleUserResponse> getUsers(List<Integer> ids, PageRequest pageRequest) {
         return null;
     }
 

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.admin.dto.AdminPatchEventRequestDto;
-import ru.practicum.admin.dto.SingleAdminEventResponse;
+import ru.practicum.common.dto.CommonSingleEventResponse;
 
 import java.util.List;
 
@@ -15,12 +15,12 @@ import java.util.List;
 public class AdminEventServiceImpl implements AdminEventService {
 
     @Override
-    public List<SingleAdminEventResponse> getEvents(List<Integer> users,
-                                                    List<String> states,
-                                                    List<Integer> categories,
-                                                    String rangeStart,
-                                                    String rangeEnd,
-                                                    PageRequest pageRequest) {
+    public List<CommonSingleEventResponse> getEvents(List<Integer> users,
+                                                     List<String> states,
+                                                     List<Integer> categories,
+                                                     String rangeStart,
+                                                     String rangeEnd,
+                                                     PageRequest pageRequest) {
         return null;
     }
 

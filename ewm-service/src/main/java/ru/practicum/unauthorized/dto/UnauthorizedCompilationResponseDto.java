@@ -1,4 +1,4 @@
-package ru.practicum.admin.dto;
+package ru.practicum.unauthorized.dto;
 
 import lombok.Data;
 import ru.practicum.common.dto.CommonSingleEventResponse;
@@ -6,7 +6,7 @@ import ru.practicum.common.dto.CommonSingleEventResponse;
 import java.util.List;
 
 @Data
-public class AdminCompilationResponseDto {
+public class UnauthorizedCompilationResponseDto {
     List<CommonSingleEventResponse> events;
     Long id;
     Boolean pinned;

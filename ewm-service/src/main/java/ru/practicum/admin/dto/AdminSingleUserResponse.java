@@ -3,7 +3,8 @@ package ru.practicum.admin.dto;
 import lombok.Data;
 
 @Data
-public class AdminCategoryResponseDto {
+public class AdminSingleUserResponse {
+    String email;
     Long id;
     String name;
 }

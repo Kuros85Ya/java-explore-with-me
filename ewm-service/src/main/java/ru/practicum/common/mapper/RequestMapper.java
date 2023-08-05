@@ -1,4 +1,4 @@
-package ru.practicum.admin.mapper;
+package ru.practicum.common.mapper;
 
 import org.springframework.data.domain.PageRequest;
 
