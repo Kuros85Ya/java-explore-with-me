@@ -30,8 +30,8 @@ public class AdminEventController {
             @RequestParam List<Integer> categories,
             @RequestParam String rangeStart,
             @RequestParam String rangeEnd,
-            @RequestParam Integer from,
-            @RequestParam Integer size) {
+            @RequestParam(defaultValue = "0") Integer from,
+            @RequestParam(defaultValue = "10") Integer size) {
         log.info("Поиск событий по параметрам {} {} {} {} {} {} {}", users, states, categories,
                 rangeStart, rangeEnd, from, size);
         PageRequest pageRequest = RequestMapper.toPageRequest(from, size);

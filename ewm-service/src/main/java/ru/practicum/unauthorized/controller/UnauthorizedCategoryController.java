@@ -3,6 +3,7 @@ package ru.practicum.unauthorized.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import ru.practicum.unauthorized.service.UnauthorizedCategoryService;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(path = "/categories")
 @RequiredArgsConstructor
 @Slf4j
@@ -21,7 +22,7 @@ public class UnauthorizedCategoryController {
 
     private final UnauthorizedCategoryService service;
 
-    @GetMapping()
+    @GetMapping
     public List<CommonCategoryResponseDto> getCategories(@RequestParam Integer from, @RequestParam Integer size) {
         log.info("Неавторизованный запрос категорий постранично from = {}, size = {}", from, size);
         PageRequest pageRequest = RequestMapper.toPageRequest(from, size);

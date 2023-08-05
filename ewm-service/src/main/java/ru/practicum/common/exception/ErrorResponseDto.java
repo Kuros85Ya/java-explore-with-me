@@ -1,13 +1,13 @@
-package ru.practicum.common.dto;
+package ru.practicum.common.exception;
 
 import lombok.Data;
-import ru.practicum.common.enums.ErrorStatus;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
 @Data
 public class ErrorResponseDto {
-    private final ErrorStatus status;
+    private final HttpStatus status;
     private final String reason;
     private final String message;
     private final LocalDateTime timestamp;
