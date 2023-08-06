@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.admin.dto.AdminPatchEventRequestDto;
+import ru.practicum.admin.dto.PatchEventRequestDto;
 import ru.practicum.common.dto.CommonSingleEventResponse;
 import ru.practicum.admin.service.AdminEventService;
 
@@ -40,7 +40,7 @@ public class AdminEventController {
 
     @PatchMapping("/{eventId}")
     public CommonSingleEventResponse patchEvent(@PathVariable Long eventId,
-                           @RequestBody @Valid AdminPatchEventRequestDto requestDto) {
+                           @RequestBody @Valid PatchEventRequestDto requestDto) {
         log.info("Изменение администратором события {}, новое значение {}", eventId, requestDto);
         return service.patchEvent(eventId, requestDto);
     }

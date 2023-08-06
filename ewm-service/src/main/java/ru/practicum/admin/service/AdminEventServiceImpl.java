@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.practicum.admin.dto.AdminPatchEventRequestDto;
+import ru.practicum.admin.dto.PatchEventRequestDto;
 import ru.practicum.authorized.service.AuthorizedEventServiceImpl;
 import ru.practicum.common.dto.CommonSingleEventResponse;
 import ru.practicum.common.enums.EventState;
@@ -52,7 +52,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     }
 
     @Override
-    public CommonSingleEventResponse patchEvent(Long eventId, AdminPatchEventRequestDto requestDto) {
+    public CommonSingleEventResponse patchEvent(Long eventId, PatchEventRequestDto requestDto) {
         Event event = service.findEventById(eventId);
 
         Long categoryId;

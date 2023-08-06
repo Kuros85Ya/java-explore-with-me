@@ -5,7 +5,7 @@ import ru.practicum.common.dto.Location;
 import ru.practicum.common.enums.StateAction;
 
 @Data
-public class AdminPatchEventRequestDto {
+public class PatchEventRequestDto {
     String annotation;
     Long category;
     String eventDate; // 2022-09-06 11:00:23

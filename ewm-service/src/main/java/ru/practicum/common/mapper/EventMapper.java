@@ -1,7 +1,7 @@
 package ru.practicum.common.mapper;
 
 import ru.practicum.admin.dto.AdminEventInitiator;
-import ru.practicum.admin.dto.AdminPatchEventRequestDto;
+import ru.practicum.admin.dto.PatchEventRequestDto;
 import ru.practicum.authorized.dto.AuthorizedEventRequestDto;
 import ru.practicum.common.dto.CommonSingleEventResponse;
 import ru.practicum.common.dto.Location;
@@ -18,11 +18,11 @@ import static ru.practicum.common.util.parseDttm;
 
 public class EventMapper {
 
-    public static Event patchRequestToEvent(Event event, Category category, AdminPatchEventRequestDto requestDto) {
+    public static Event patchRequestToEvent(Event event, Category category, PatchEventRequestDto requestDto) {
         EventState newState;
         if (requestDto.getStateAction() == StateAction.PUBLISH_EVENT) {
             newState = EventState.PUBLISHED;
-        } else if (requestDto.getStateAction() == StateAction.REJECT_EVENT) {
+        } else if (requestDto.getStateAction() == StateAction.REJECT_EVENT || requestDto.getStateAction() == StateAction.CANCEL_REVIEW) {
             newState = EventState.CANCELED;
         } else newState = EventState.valueOf(event.getStatus());
 
@@ -88,6 +88,13 @@ public class EventMapper {
             requestModeration = requestDto.getRequestModeration();
         }
 
+        Category categoryModified;
+        if (category == null) {
+            categoryModified = event.getCategory();
+        } else {
+            categoryModified = category;
+        }
+
         String title;
         if (requestDto.getTitle() == null) {title = event.getTitle();}
         else {title = requestDto.getTitle();}
@@ -103,7 +110,7 @@ public class EventMapper {
                 limit,
                 requestModeration,
                 title,
-                category,
+                categoryModified,
                 event.getCreator(),
                 event.getCreatedOn(),
                 publishedOn,
@@ -154,7 +161,7 @@ public class EventMapper {
                 event.getParticipantLimit(),
                 dttmToString(event.getPublishedOn()),
                 event.getRequestModeration(),
-                null, //todo avtuman1 нужно добавить state
+                EventState.valueOf(event.getStatus()),
                 event.getTitle(),
                 null //todo avtuman1 нужно добавить метрику views
         );

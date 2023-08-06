@@ -11,7 +11,7 @@ public interface UnauthorizedEventService {
 
     List<CommonSingleEventResponse> getEvents(
             String text,
-            List<Integer> categories,
+            List<Long> categories,
             Boolean paid,
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,

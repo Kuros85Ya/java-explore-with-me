@@ -7,8 +7,8 @@ import ru.practicum.common.dto.Location;
 public class AuthorizedEventRequestDto {
     String annotation;
     Long category;
-    String description;
     String eventDate;
+    String description;
     Location location;
     Boolean paid;
     Integer participantLimit;

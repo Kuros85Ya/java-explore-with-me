@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.admin.dto.PatchEventRequestDto;
 import ru.practicum.authorized.dto.AuthorizedEventRequestDto;
 import ru.practicum.authorized.dto.AuthorizedMultipleRequestsChangeRequestDto;
 import ru.practicum.authorized.dto.AuthorizedMultipleRequestsChangeResponseDto;
@@ -28,9 +29,9 @@ public class AuthorizedEventController {
     private final AuthorizedEventService service;
 
     @GetMapping("/{userId}/events")
-    public List<CommonSingleEventResponse> getEventById(@PathVariable Long userId,
-                                                        @RequestParam Integer from,
-                                                        @RequestParam Integer size) {
+    public List<CommonSingleEventResponse> getEventByUserId(@PathVariable Long userId,
+                                                            @RequestParam Integer from,
+                                                            @RequestParam Integer size) {
         log.info("Запрос авторизованным пользователем событий по userId = {}, from = {}, size = {}", userId, from, size);
         PageRequest pageRequest = toPageRequest(from, size);
         return service.getEventsByUserId(userId, pageRequest);
@@ -54,7 +55,7 @@ public class AuthorizedEventController {
     @PatchMapping("/{userId}/events/{eventId}")
     public CommonSingleEventResponse patchSingleEvent(@PathVariable Long userId,
                                                       @PathVariable Long eventId,
-                                                      @RequestBody @Valid AuthorizedEventRequestDto requestDto) {
+                                                      @RequestBody @Valid PatchEventRequestDto requestDto) {
         log.info("Изменение события пользователя userId = {}, eventId = {}, new event = {}", userId, eventId, requestDto);
         return service.patchEvent(userId, eventId, requestDto);
     }
@@ -62,8 +63,8 @@ public class AuthorizedEventController {
     @GetMapping("/{userId}/events/{eventId}/requests")
     public List<AuthorizedRequestResponseDto> getEventRequests(@PathVariable Long userId,
                                                                @PathVariable Long eventId) {
-        log.info("Запрос авторизованным пользователем по событиям userId = {}, eventId = {}", userId, eventId);
-        return service.getEventRequest(userId, eventId);
+        log.info("Запрос заявок на участие в событии пользователя userId = {}, eventId = {}", userId, eventId);
+        return service.getUserEventRequest(userId, eventId);
     }
 
     @PatchMapping("/{userId}/events/{eventId}/requests")

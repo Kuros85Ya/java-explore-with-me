@@ -1,7 +1,7 @@
 package ru.practicum.admin.service;
 
 import org.springframework.data.domain.PageRequest;
-import ru.practicum.admin.dto.AdminPatchEventRequestDto;
+import ru.practicum.admin.dto.PatchEventRequestDto;
 import ru.practicum.common.dto.CommonSingleEventResponse;
 
 import java.util.List;
@@ -18,5 +18,5 @@ public interface AdminEventService {
             PageRequest pageRequest
     );
 
-    CommonSingleEventResponse patchEvent(Long eventId, AdminPatchEventRequestDto requestDto);
+    CommonSingleEventResponse patchEvent(Long eventId, PatchEventRequestDto requestDto);
 }

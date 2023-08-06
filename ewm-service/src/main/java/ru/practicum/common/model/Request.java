@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import ru.practicum.common.enums.RequestStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,7 +23,7 @@ public class Request {
     private User requester;
     @ManyToOne
     private Event event;
-    private RequestStatus status;
+    private String status;
     private LocalDateTime created;
 
     @Override
@@ -32,7 +31,7 @@ public class Request {
         if (this == o) return true;
         if (!(o instanceof Request)) return false;
         Request request = (Request) o;
-        return Objects.equals(getId(), request.getId()) && Objects.equals(getRequester(), request.getRequester()) && Objects.equals(getEvent(), request.getEvent()) && getStatus() == request.getStatus() && Objects.equals(getCreated(), request.getCreated());
+        return Objects.equals(getId(), request.getId()) && Objects.equals(getRequester(), request.getRequester()) && Objects.equals(getEvent(), request.getEvent()) && Objects.equals(getStatus(), request.getStatus()) && Objects.equals(getCreated(), request.getCreated());
     }
 
     @Override

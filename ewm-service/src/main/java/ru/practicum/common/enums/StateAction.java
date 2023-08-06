@@ -4,7 +4,8 @@ import org.springframework.core.convert.converter.Converter;
 
 public enum StateAction {
     PUBLISH_EVENT,
-    REJECT_EVENT;
+    REJECT_EVENT,
+    CANCEL_REVIEW;
 
     public static class StringToEnumConverter implements Converter<String, StateAction> {
         @Override

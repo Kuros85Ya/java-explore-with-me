@@ -9,6 +9,7 @@ import ru.practicum.common.dto.CommonSingleEventResponse;
 import ru.practicum.common.enums.SortType;
 import ru.practicum.unauthorized.service.UnauthorizedEventService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static ru.practicum.common.util.parseDttm;
@@ -26,10 +27,10 @@ public class UnauthorizedEventController {
     @GetMapping()
     public List<CommonSingleEventResponse> getEvents(
             @RequestParam String text,
-            @RequestParam List<Integer> categories,
+            @RequestParam List<Long> categories,
             @RequestParam Boolean paid,
-            @RequestParam String rangeStart,
-            @RequestParam String rangeEnd,
+            @RequestParam(required = false) String rangeStart,
+            @RequestParam(required = false) String rangeEnd,
             @RequestParam Boolean onlyAvailable,
             @RequestParam SortType sort,
             @RequestParam Integer from,
@@ -37,12 +38,26 @@ public class UnauthorizedEventController {
         log.info("Поиск событий неавторизованным польозователем по параметрам text = {} categories = {} paid = {} rangeStart = {} rangeEnd = {} onlyAvailbale = {} sort = {}, from = {}, size = {}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         PageRequest pageRequest = toPageRequest(from, size);
-        return service.getEvents(text, categories, paid, parseDttm(rangeStart), parseDttm(rangeEnd), onlyAvailable, sort, pageRequest);
+
+        LocalDateTime startDt;
+        if (rangeStart == null && rangeEnd == null) {
+            startDt = LocalDateTime.now();
+        } else {
+            startDt = parseDttm(rangeStart);
+        }
+
+        LocalDateTime endDt;
+        if (rangeEnd == null) {
+            endDt = LocalDateTime.MAX;
+        } else {
+            endDt = parseDttm(rangeEnd);
+        }
+        return service.getEvents(text, categories, paid, startDt, endDt, onlyAvailable, sort, pageRequest);
     }
 
     @GetMapping("/{eventId}")
     public CommonSingleEventResponse getEventById(@PathVariable Long eventId) {
-        log.info("Поиск события неавторизованным пользователем по id = {}", eventId);
+        log.info("Поиск события любым пользователем по id = {}", eventId);
         return service.getEventById(eventId);
     }
 }
