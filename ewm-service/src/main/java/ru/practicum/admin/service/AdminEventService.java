@@ -10,13 +10,13 @@ public interface AdminEventService {
 
     /**Добавление категории событий. Имя категории должно быть уникальным**/
     List<CommonSingleEventResponse> getEvents(
-            List<Integer> users,
+            List<Long> users,
             List<String> states,
-            List<Integer> categories,
+            List<Long> categories,
             String rangeStart,
             String rangeEnd,
             PageRequest pageRequest
     );
 
-    void patchEvent(Long eventId, AdminPatchEventRequestDto requestDto);
+    CommonSingleEventResponse patchEvent(Long eventId, AdminPatchEventRequestDto requestDto);
 }

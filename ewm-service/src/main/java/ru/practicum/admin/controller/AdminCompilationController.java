@@ -2,7 +2,6 @@ package ru.practicum.admin.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.admin.dto.*;
@@ -10,7 +9,7 @@ import ru.practicum.admin.service.AdminCompilationService;
 
 import javax.validation.Valid;
 
-@Controller
+@RestController
 @RequestMapping(path = "/admin/compilations")
 @RequiredArgsConstructor
 @Slf4j

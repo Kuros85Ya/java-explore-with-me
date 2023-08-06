@@ -1,12 +1,17 @@
 package ru.practicum.authorized.dto;
 
 import lombok.Data;
-
-import java.util.List;
+import ru.practicum.common.dto.Location;
 
 @Data
 public class AuthorizedEventRequestDto {
-    List<Long> events;
-    Boolean pinned;
+    String annotation;
+    Long category;
+    String description;
+    String eventDate;
+    Location location;
+    Boolean paid;
+    Integer participantLimit;
+    Boolean requestModeration;
     String title;
 }

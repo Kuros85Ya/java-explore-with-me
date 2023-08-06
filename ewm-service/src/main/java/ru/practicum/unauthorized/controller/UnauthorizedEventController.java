@@ -3,19 +3,18 @@ package ru.practicum.unauthorized.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.common.dto.CommonSingleEventResponse;
 import ru.practicum.common.enums.SortType;
-import ru.practicum.common.mapper.RequestMapper;
 import ru.practicum.unauthorized.service.UnauthorizedEventService;
 
 import java.util.List;
 
 import static ru.practicum.common.util.parseDttm;
+import static ru.practicum.common.util.toPageRequest;
 
-@Controller
+@RestController
 @RequestMapping(path = "/events")
 @RequiredArgsConstructor
 @Slf4j
@@ -37,7 +36,7 @@ public class UnauthorizedEventController {
             @RequestParam Integer size) {
         log.info("Поиск событий неавторизованным польозователем по параметрам text = {} categories = {} paid = {} rangeStart = {} rangeEnd = {} onlyAvailbale = {} sort = {}, from = {}, size = {}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
-        PageRequest pageRequest = RequestMapper.toPageRequest(from, size);
+        PageRequest pageRequest = toPageRequest(from, size);
         return service.getEvents(text, categories, paid, parseDttm(rangeStart), parseDttm(rangeEnd), onlyAvailable, sort, pageRequest);
     }
 

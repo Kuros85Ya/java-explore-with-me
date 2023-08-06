@@ -3,7 +3,7 @@ package ru.practicum.authorized.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.authorized.dto.AuthorizedEventRequestDto;
@@ -12,12 +12,13 @@ import ru.practicum.authorized.dto.AuthorizedMultipleRequestsChangeResponseDto;
 import ru.practicum.authorized.dto.AuthorizedRequestResponseDto;
 import ru.practicum.authorized.service.AuthorizedEventService;
 import ru.practicum.common.dto.CommonSingleEventResponse;
-import ru.practicum.common.mapper.RequestMapper;
 
 import javax.validation.Valid;
 import java.util.List;
 
-@Controller
+import static ru.practicum.common.util.toPageRequest;
+
+@RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
 @Slf4j
@@ -31,11 +32,12 @@ public class AuthorizedEventController {
                                                         @RequestParam Integer from,
                                                         @RequestParam Integer size) {
         log.info("Запрос авторизованным пользователем событий по userId = {}, from = {}, size = {}", userId, from, size);
-        PageRequest pageRequest = RequestMapper.toPageRequest(from, size);
+        PageRequest pageRequest = toPageRequest(from, size);
         return service.getEventsByUserId(userId, pageRequest);
     }
 
     @PostMapping("/{userId}/events")
+    @ResponseStatus(HttpStatus.CREATED)
     public CommonSingleEventResponse addEvent(@PathVariable Long userId,
                                               @RequestBody @Valid AuthorizedEventRequestDto requestDto) {
         log.info("Создание авторизованным пользователем события. userId = {}, {}", userId, requestDto);

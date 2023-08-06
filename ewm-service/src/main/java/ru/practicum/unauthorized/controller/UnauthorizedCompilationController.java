@@ -3,16 +3,16 @@ package ru.practicum.unauthorized.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.common.mapper.RequestMapper;
 import ru.practicum.unauthorized.dto.UnauthorizedCompilationResponseDto;
 import ru.practicum.unauthorized.service.UnauthorizedCompilationService;
 
 import java.util.List;
 
-@Controller
+import static ru.practicum.common.util.toPageRequest;
+
+@RestController
 @RequestMapping(path = "/compilations")
 @RequiredArgsConstructor
 @Slf4j
@@ -27,7 +27,7 @@ public class UnauthorizedCompilationController {
            @RequestParam Integer from,
            @RequestParam Integer size) {
         log.info("Получить компиляции событий pinned = {}, from = {}, size = {}", pinned, from, size);
-        PageRequest pageRequest = RequestMapper.toPageRequest(from, size);
+        PageRequest pageRequest = toPageRequest(from, size);
         return service.getCompilations(pinned, pageRequest);
     }
 

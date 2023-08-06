@@ -3,7 +3,8 @@ package ru.practicum.common.enums;
 import org.springframework.core.convert.converter.Converter;
 
 public enum StateAction {
-    PUBLISH_EVENT;
+    PUBLISH_EVENT,
+    REJECT_EVENT;
 
     public static class StringToEnumConverter implements Converter<String, StateAction> {
         @Override

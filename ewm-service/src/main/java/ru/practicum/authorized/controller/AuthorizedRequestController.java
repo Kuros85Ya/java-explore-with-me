@@ -2,7 +2,7 @@ package ru.practicum.authorized.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.authorized.dto.AuthorizedRequestResponseDto;
@@ -10,7 +10,7 @@ import ru.practicum.authorized.service.AuthorizedRequestService;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(path = "/users/{userId}/requests")
 @RequiredArgsConstructor
 @Slf4j
@@ -25,8 +25,9 @@ public class AuthorizedRequestController {
         return service.getUserRequests(userId);
     }
 
-    @PostMapping("/{eventId}")
-    public AuthorizedRequestResponseDto addRequestToJoinEvent(@PathVariable Long userId, @PathVariable Long eventId) {
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    public AuthorizedRequestResponseDto addRequestToJoinEvent(@PathVariable Long userId, @RequestParam Long eventId) {
         log.info("Добавление заявки авторизованного пользователя на участие в событии, userId = {}, eventId = {}", userId, eventId);
         return service.addRequestToJoinEvent(userId, eventId);
     }

@@ -7,10 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.admin.dto.*;
-import ru.practicum.common.mapper.RequestMapper;
 import ru.practicum.admin.service.AdminUsersService;
 
 import java.util.List;
+
+import static ru.practicum.common.util.toPageRequest;
 
 @RestController
 @RequestMapping(path = "/admin/users")
@@ -27,7 +28,7 @@ public class AdminUserController {
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size) {
         log.info("Поиск пользователей по параметрам {} {} {}", ids, from, size);
-        PageRequest pageRequest = RequestMapper.toPageRequest(from, size);
+        PageRequest pageRequest = toPageRequest(from, size);
         return service.getUsers(ids, pageRequest);
     }
 
