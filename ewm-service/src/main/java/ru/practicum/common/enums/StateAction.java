@@ -3,6 +3,7 @@ package ru.practicum.common.enums;
 import org.springframework.core.convert.converter.Converter;
 
 public enum StateAction {
+    SEND_TO_REVIEW,
     PUBLISH_EVENT,
     REJECT_EVENT,
     CANCEL_REVIEW;

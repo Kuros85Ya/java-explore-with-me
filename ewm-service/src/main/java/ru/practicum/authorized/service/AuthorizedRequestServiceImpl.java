@@ -2,9 +2,11 @@ package ru.practicum.authorized.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.practicum.authorized.dto.AuthorizedRequestResponseDto;
 import ru.practicum.authorized.mapper.RequestMapper;
+import ru.practicum.common.enums.EventState;
 import ru.practicum.common.enums.RequestStatus;
 import ru.practicum.common.model.Event;
 import ru.practicum.common.model.Request;
@@ -39,6 +41,21 @@ public class AuthorizedRequestServiceImpl implements AuthorizedRequestService {
     public AuthorizedRequestResponseDto addRequestToJoinEvent(Long userId, Long eventId) {
         Event event = eventService.findEventById(eventId);
         User user = eventService.findUserById(userId);
+
+        if ((event.getRequests()
+                .stream()
+                .filter(it -> Objects.equals(it.getRequester().getId(), userId))
+                .findAny().orElse(null) != null)
+                || (Objects.equals(event.getCreator().getId(), userId))
+                || (!Objects.equals(event.getStatus(), EventState.PUBLISHED.name()))) {
+            throw new DataIntegrityViolationException("Пользователь не может отправить заявку на это событие");
+        }
+
+        if (event.getParticipantLimit() != 0) {
+            if (event.getRequests().stream().filter(it-> Objects.equals(it.getStatus(), RequestStatus.CONFIRMED.name())).count() >= event.getParticipantLimit()) {
+                throw new DataIntegrityViolationException("Достигнуто максимально возможное количество участников события");
+            }
+        }
 
         Request request = requestRepository.save(RequestMapper.toRequest(user, event));
         return RequestMapper.toRequestResponseDto(request);

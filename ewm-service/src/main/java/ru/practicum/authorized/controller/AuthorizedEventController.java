@@ -30,8 +30,8 @@ public class AuthorizedEventController {
 
     @GetMapping("/{userId}/events")
     public List<CommonSingleEventResponse> getEventByUserId(@PathVariable Long userId,
-                                                            @RequestParam Integer from,
-                                                            @RequestParam Integer size) {
+                                                            @RequestParam(defaultValue = "0") Integer from,
+                                                            @RequestParam(defaultValue = "10") Integer size) {
         log.info("Запрос авторизованным пользователем событий по userId = {}, from = {}, size = {}", userId, from, size);
         PageRequest pageRequest = toPageRequest(from, size);
         return service.getEventsByUserId(userId, pageRequest);

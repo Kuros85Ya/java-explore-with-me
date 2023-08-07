@@ -22,7 +22,8 @@ public class UnauthorizedCategoryController {
     private final UnauthorizedCategoryService service;
 
     @GetMapping
-    public List<CommonCategoryResponseDto> getCategories(@RequestParam Integer from, @RequestParam Integer size) {
+    public List<CommonCategoryResponseDto> getCategories(@RequestParam(defaultValue = "0") Integer from,
+                                                         @RequestParam(defaultValue = "10") Integer size) {
         log.info("Неавторизованный запрос категорий постранично from = {}, size = {}", from, size);
         PageRequest pageRequest = toPageRequest(from, size);
         return service.getCategories(pageRequest);

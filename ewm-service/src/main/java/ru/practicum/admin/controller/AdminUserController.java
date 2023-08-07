@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.admin.dto.*;
 import ru.practicum.admin.service.AdminUsersService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static ru.practicum.common.util.toPageRequest;
@@ -34,7 +35,7 @@ public class AdminUserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public AdminUserResponseDto createUser(@RequestBody AdminUserRequestDto requestDto) {
+    public AdminUserResponseDto createUser(@RequestBody @Valid AdminUserRequestDto requestDto) {
         log.info("Добавление пользователя администратором {}", requestDto);
         return service.addUser(requestDto);
     }

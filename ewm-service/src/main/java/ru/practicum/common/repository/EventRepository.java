@@ -14,9 +14,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> getAllByIdIn(List<Long> ids);
 
     @Query("select e from Event as e where " +
-            "e.creator.id IN (:users) " +
-            "AND e.status IN (:states) " +
-            "AND e.category.id IN (:categories) " +
+            "(coalesce(:users, null) is null OR e.creator.id in (:users)) " +
+            "and (coalesce(:states, null) is null OR e.status in (:states)) " +
+            "and (coalesce(:categories, null) is null OR e.category.id in (:categories)) " +
             "AND e.eventDate > :rangeStart " +
             "AND e.eventDate < :rangeEnd ")
     List<Event> getEventsByParameters(List<Long> users,
@@ -29,10 +29,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> getEventsByCreatorIs(User creator, PageRequest pageRequest);
 
     @Query("select e from Event as e " +
-            "where (upper(e.description) like upper('%' || :text || '%') " +
-            "or upper(e.annotation) like upper('%' || :text || '%') ) " +
-            "and e.category.id in (:categories) " +
-            "and e.paid = :paid " +
+            "where (upper(e.description) like upper('%' || :text || '%')  or upper(e.annotation) like upper('%' || :text || '%')) " +
+            "and (coalesce(:categories, null) is null OR e.category.id in (:categories)) " +
+            "and (coalesce(:paid, null) is null OR e.paid = :paid) " +
             "and e.status = 'PUBLISHED' " +
             "and e.eventDate > :rangeStart " +
             "and e.eventDate < :rangeEnd " +
@@ -53,8 +52,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("select e from Event as e " +
             "where (upper(e.description) like upper( '%' || :text || '%')) " +
             "or upper(e.annotation) like upper( '%' || :text || '%') " +
-            "and e.category.id in (:categories) " +
-            "and e.paid = :paid " +
+            "and (coalesce(:categories, null) is null OR e.category.id in (:categories)) " +
+            "and (coalesce(:paid, null) is null OR e.paid = :paid) " +
             "and e.status = 'PUBLISHED' " +
             "and e.eventDate > :rangeStart " +
             "and e.eventDate < :rangeEnd " +

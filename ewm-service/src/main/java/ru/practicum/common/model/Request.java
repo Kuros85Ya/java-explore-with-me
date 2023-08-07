@@ -30,7 +30,7 @@ public class Request {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Request)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Request request = (Request) o;
         return Objects.equals(getId(), request.getId()) && Objects.equals(getRequester(), request.getRequester()) && Objects.equals(getEvent(), request.getEvent()) && Objects.equals(getStatus(), request.getStatus()) && Objects.equals(getCreated(), request.getCreated());
     }
@@ -38,5 +38,16 @@ public class Request {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getRequester(), getEvent(), getStatus(), getCreated());
+    }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "id=" + id +
+                ", requester=" + requester +
+                ", event=" + event +
+                ", status='" + status + '\'' +
+                ", created=" + created +
+                '}';
     }
 }

@@ -15,10 +15,17 @@ import java.util.stream.Collectors;
 public class RequestMapper {
 
     public static Request toRequest(User user, Event event) {
+        RequestStatus status;
+        if (!event.getRequestModeration() || (event.getParticipantLimit() == 0)) {
+            status = RequestStatus.CONFIRMED;
+        } else {
+            status = RequestStatus.PENDING;
+        }
+
         return new Request(null,
                 user,
                 event,
-                RequestStatus.PENDING.name(),
+                status.name(),
                 LocalDateTime.now());
     }
 

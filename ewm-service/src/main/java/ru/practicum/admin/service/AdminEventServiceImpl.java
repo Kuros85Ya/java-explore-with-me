@@ -2,6 +2,7 @@ package ru.practicum.admin.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.admin.dto.PatchEventRequestDto;
@@ -13,10 +14,12 @@ import ru.practicum.common.mapper.EventMapper;
 import ru.practicum.common.model.Category;
 import ru.practicum.common.model.Event;
 import ru.practicum.common.repository.EventRepository;
+import ru.practicum.unauthorized.service.StatsService;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,7 @@ public class AdminEventServiceImpl implements AdminEventService {
 
     private final AuthorizedEventServiceImpl service;
     private final EventRepository repository;
+    private final StatsService statsService;
 
     @Override
     public List<CommonSingleEventResponse> getEvents(List<Long> users,
@@ -37,19 +41,35 @@ public class AdminEventServiceImpl implements AdminEventService {
                                                      String rangeStart,
                                                      String rangeEnd,
                                                      PageRequest pageRequest) {
+        LocalDateTime startDt;
+        if (rangeStart == null && rangeEnd == null) {
+            startDt = LocalDateTime.now();
+        } else {
+            startDt = parseDttm(rangeStart);
+        }
+
+        LocalDateTime endDt;
+        if (rangeEnd == null) {
+            endDt = LocalDateTime.of(3000, 12, 1, 10, 1);
+        } else {
+            endDt = parseDttm(rangeEnd);
+        }
+
+        if (endDt.isBefore(startDt)) {
+            throw new ValidationException("Конец диапазона не может быть раньше начала");
+        }
         List<Event> events = repository.getEventsByParameters(
                 users,
                 states,
                 categories,
-                parseDttm(rangeStart),
-                parseDttm(rangeEnd),
+                startDt,
+                endDt,
                 pageRequest);
-
-
+        Map<Long, Long> eventViews = statsService.getListEventViews(events);
 
         return events
                 .stream()
-                .map(EventMapper::toEventResponseDto)
+                .map(it -> EventMapper.toEventResponseDto(it, eventViews.get(it.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -69,7 +89,8 @@ public class AdminEventServiceImpl implements AdminEventService {
         validateEvent(event, requestDto.getStateAction());
         Event modifiedEvent = EventMapper.patchRequestToEvent(event, category, requestDto);
         repository.save(modifiedEvent);
-        return EventMapper.toEventResponseDto(modifiedEvent);
+        Long views = statsService.getEventView(modifiedEvent);
+        return EventMapper.toEventResponseDto(modifiedEvent, views);
     }
 
     /**
@@ -82,7 +103,7 @@ public class AdminEventServiceImpl implements AdminEventService {
                 || ((stateAction == StateAction.PUBLISH_EVENT
                 || stateAction == StateAction.REJECT_EVENT)
                 && !Objects.equals(event.getStatus(), EventState.PENDING.name()))) {
-            throw new ValidationException("Попытка выполнить недопустимое действие с событием");
+            throw new DataIntegrityViolationException("Попытка выполнить недопустимое действие с событием");
         }
     }
 }

@@ -23,7 +23,7 @@ public class AdminCompilationController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public CompilationResponseDto addCompilation(
-            @RequestBody @Valid AdminCompilationRequestDto requestDto) {
+            @RequestBody @Valid AdminCompilationPostRequestDto requestDto) {
         log.info("Добавление компиляции событий {}", requestDto);
         return service.addCompilation(requestDto);
     }
@@ -37,7 +37,7 @@ public class AdminCompilationController {
 
     @PatchMapping("/{compId}")
     public CompilationResponseDto patchCompilation(@PathVariable Long compId,
-                                                   @RequestBody @Valid AdminCompilationRequestDto requestDto) {
+                                                   @RequestBody @Valid AdminCompilationPatchRequestDto requestDto) {
         return service.patchCompilation(compId, requestDto);
     }
 }

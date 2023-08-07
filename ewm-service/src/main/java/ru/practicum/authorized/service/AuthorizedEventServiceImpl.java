@@ -2,6 +2,7 @@ package ru.practicum.authorized.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.admin.dto.PatchEventRequestDto;
@@ -22,13 +23,11 @@ import ru.practicum.common.repository.CategoryRepository;
 import ru.practicum.common.repository.EventRepository;
 import ru.practicum.common.repository.RequestRepository;
 import ru.practicum.common.repository.UserRepository;
+import ru.practicum.unauthorized.service.StatsService;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,14 +39,17 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
+    private final StatsService service;
 
     @Override
     public List<CommonSingleEventResponse> getEventsByUserId(Long id, PageRequest pageRequest) {
         User creator = findUserById(id);
         List<Event> events = repository.getEventsByCreatorIs(creator, pageRequest);
+
+        Map<Long, Long> eventViews = service.getListEventViews(events);
         return events
                 .stream()
-                .map(EventMapper::toEventResponseDto)
+                .map(it -> EventMapper.toEventResponseDto(it, eventViews.get(it.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -57,14 +59,15 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
         Category category = findCategoryById(requestDto.getCategory());
 
         Event event = repository.save(EventMapper.toEvent(user, category, requestDto));
-        return EventMapper.toEventResponseDto(event);
+        return EventMapper.toEventResponseDto(event, 0L);
     }
 
     @Override
     public CommonSingleEventResponse getUserEventByEventId(Long userId, Long eventId) {
         User creator = findUserById(userId);
         Event event = repository.getEventByIdAndCreator(eventId, creator);
-        return EventMapper.toEventResponseDto(event);
+        Long views = service.getEventView(event);
+        return EventMapper.toEventResponseDto(event, views);
     }
 
     @Override
@@ -80,7 +83,8 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
         }
 
         Event modifiedEvent = EventMapper.patchRequestToEvent(event, category, requestDto);
-        return EventMapper.toEventResponseDto(modifiedEvent);
+        Long views = service.getEventView(modifiedEvent);
+        return EventMapper.toEventResponseDto(modifiedEvent, views);
     }
 
     @Override
@@ -100,7 +104,7 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
         if ((!Objects.equals(event.getCreator().getId(), userId)
             || (Objects.equals(event.getStatus(), EventState.PUBLISHED.name())))
             || (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2)))) {
-            throw new ValidationException("Это событие не может быть изменено пользователем");
+            throw new DataIntegrityViolationException("Это событие не может быть изменено пользователем");
         }
     }
 
@@ -112,14 +116,18 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
         if (!Objects.equals(event.getCreator().getId(), userId)
                 || (Objects.equals(event.getRequestModeration(), false))
                 || Objects.equals(request.getStatus(), RequestStatus.CONFIRMED.name()))
-            throw new ValidationException("Это событие не может быть изменено пользователем");
+            throw new DataIntegrityViolationException("Это событие не может быть изменено пользователем");
     }
 
     @Override
     public AuthorizedMultipleRequestsChangeResponseDto changeMultipleRequestStatus(Long userId, Long eventId, AuthorizedMultipleRequestsChangeRequestDto requestDto) {
         Event event = findEventById(eventId);
         List<Request> requestsToApprove = requestRepository.getAllRequestsFromListOfIds(requestDto.getRequestIds());
-
+        if (event.getParticipantLimit() != 0) {
+            if (event.getRequests().stream().filter(it-> Objects.equals(it.getStatus(), RequestStatus.CONFIRMED.name())).count() >= event.getParticipantLimit()) {
+                throw new DataIntegrityViolationException("Достигнуто максимально возможное количество участников события");
+            }
+        }
         List<Request> modifiedRequests;
         if (requestDto.getStatus() == RequestStatus.CONFIRMED) {
             modifiedRequests = dealWithRequestsListApprove(requestsToApprove, event);

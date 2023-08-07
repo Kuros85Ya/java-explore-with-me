@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.practicum.client.StatsClient;
 import ru.practicum.common.dto.CommonSingleEventResponse;
 import ru.practicum.common.enums.EventState;
 import ru.practicum.common.enums.SortType;
@@ -14,6 +13,7 @@ import ru.practicum.common.repository.EventRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
 
     private final EventRepository repository;
-    private final StatsClient client;
+    private final StatsService service;
 
     @Override
     public List<CommonSingleEventResponse> getEvents(String text,
@@ -41,9 +41,11 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
         } else {
             events = repository.getEventsByParametersUnauthorizedAll(text, categories, paid, rangeStart, rangeEnd, pageRequest);
         }
+        Map<Long, Long> eventViews = service.getListEventViews(events);
+
         return events
                 .stream()
-                .map(EventMapper::toEventResponseDto)
+                .map(it-> EventMapper.toEventResponseDto(it, eventViews.get(it.getId())))
                 .collect(Collectors.toList());
 
         //todo avtuman1 сделай сортировку по частоте просмотров
@@ -55,8 +57,7 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
     public CommonSingleEventResponse getEventById(Long id) {
         Event event = repository.getEventByIdAndStatus(id, EventState.PUBLISHED.name());
         if (event == null) throw new NoSuchElementException("Событие по id не найдено");
-        return EventMapper.toEventResponseDto(event);
-
-        //todo avtuman1 добавь отображение факта запроса информации по событию в статистику
+        Long views = service.saveNewEventView(event);
+        return EventMapper.toEventResponseDto(event, views);
     }
 }

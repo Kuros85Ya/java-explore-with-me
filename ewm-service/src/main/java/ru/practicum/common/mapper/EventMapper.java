@@ -12,6 +12,7 @@ import ru.practicum.common.model.Category;
 import ru.practicum.common.model.Event;
 import ru.practicum.common.model.User;
 
+import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -26,7 +27,11 @@ public class EventMapper {
             newState = EventState.PUBLISHED;
         } else if (requestDto.getStateAction() == StateAction.REJECT_EVENT || requestDto.getStateAction() == StateAction.CANCEL_REVIEW) {
             newState = EventState.CANCELED;
-        } else newState = EventState.valueOf(event.getStatus());
+        } else if (requestDto.getStateAction() == StateAction.SEND_TO_REVIEW) {
+            newState = EventState.PENDING;
+        } else {
+            newState = EventState.valueOf(event.getStatus());
+        }
 
         LocalDateTime publishedOn;
         if (newState == EventState.PUBLISHED) {
@@ -55,6 +60,9 @@ public class EventMapper {
             eventDate = event.getEventDate();
         } else {
             eventDate = parseDttm(requestDto.getEventDate());
+            if (eventDate.isBefore(LocalDateTime.now())) {
+                throw new ValidationException("Новая дата в прошлом");
+            }
         }
 
         Float latitude;
@@ -98,8 +106,11 @@ public class EventMapper {
         }
 
         String title;
-        if (requestDto.getTitle() == null) {title = event.getTitle();}
-        else {title = requestDto.getTitle();}
+        if (requestDto.getTitle() == null) {
+            title = event.getTitle();
+        } else {
+            title = requestDto.getTitle();
+        }
 
         return new Event(
                 event.getId(),
@@ -124,12 +135,11 @@ public class EventMapper {
 
     public static Event toEvent(User user, Category category, AuthorizedEventRequestDto requestDto) {
         LocalDateTime eventDate = parseDttm(requestDto.getEventDate());
-        EventState state;
-        if (requestDto.getRequestModeration()) {
-            state = EventState.PENDING;
-        } else {
-            state = EventState.PUBLISHED;
+        if (eventDate.isBefore(LocalDateTime.now())) {
+            throw new ValidationException("Дата события не может быть в прошлом");
         }
+
+        EventState state = EventState.PENDING;
 
         return new Event(
                 null,
@@ -152,7 +162,7 @@ public class EventMapper {
         );
     }
 
-    public static CommonSingleEventResponse toEventResponseDto(Event event) {
+    public static CommonSingleEventResponse toEventResponseDto(Event event, Long views) {
         long confirmedRequests;
         if (event.getRequests() == null) {
             confirmedRequests = 0L;
@@ -176,7 +186,7 @@ public class EventMapper {
                 event.getRequestModeration(),
                 EventState.valueOf(event.getStatus()),
                 event.getTitle(),
-                null //todo avtuman1 нужно добавить метрику views
+                views
         );
     }
 }

@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 import ru.practicum.common.dto.CompilationResponseDto;
 import ru.practicum.admin.mapper.CompilationMapper;
 import ru.practicum.common.model.Compilation;
+import ru.practicum.common.model.Event;
 import ru.practicum.common.repository.CompilationRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class UnauthorizedCompilationServiceImpl implements UnauthorizedCompilationService {
 
     private final CompilationRepository repository;
+    private final StatsService service;
 
     @Override
     public List<CompilationResponseDto> getCompilations(Boolean pinned, PageRequest pageRequest) {
@@ -29,9 +32,12 @@ public class UnauthorizedCompilationServiceImpl implements UnauthorizedCompilati
             compilations = repository.findAllByPinned(pinned, pageRequest);
         }
 
+        List<Event> events = compilations.stream().map(Compilation::getEvents).flatMap(List::stream).collect(Collectors.toList());
+        Map<Long, Long> eventViews = service.getListEventViews(events);
+
         return compilations
                 .stream()
-                .map(CompilationMapper::toCompilationResponseDto)
+                .map(it -> CompilationMapper.toCompilationResponseDto(it, eventViews))
                 .collect(Collectors.toList());
     }
 
@@ -39,6 +45,7 @@ public class UnauthorizedCompilationServiceImpl implements UnauthorizedCompilati
     public CompilationResponseDto getCompilationById(Long compId) {
         Compilation compilation = repository.findById(compId).orElseThrow(()
                 -> new NoSuchElementException("Компилция с ID = " + compId + " не найдена."));
-        return CompilationMapper.toCompilationResponseDto(compilation);
+        Map<Long, Long> eventViews = service.getListEventViews(compilation.getEvents());
+        return CompilationMapper.toCompilationResponseDto(compilation, eventViews);
     }
 }
