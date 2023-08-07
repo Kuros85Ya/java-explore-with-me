@@ -1,12 +1,13 @@
-package ru.practicum.admin.dto;
+package ru.practicum.common.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.common.dto.CommonSingleEventResponse;
 
 import java.util.List;
 
 @Data
-public class AdminCompilationResponseDto {
+@AllArgsConstructor
+public class CompilationResponseDto {
     List<CommonSingleEventResponse> events;
     Long id;
     Boolean pinned;

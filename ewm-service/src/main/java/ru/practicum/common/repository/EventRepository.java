@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
+    List<Event> getAllByIdIn(List<Long> ids);
+
     @Query("select e from Event as e where " +
             "e.creator.id IN (:users) " +
             "AND e.status IN (:states) " +
@@ -38,7 +40,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "      (select count(*) " +
             "       from Request as r" +
             "       where r.event.id = e.id " +
-            "           and r.status = 'APPROVED') " +
+            "           and r.status = 'CONFIRMED') " +
             "order by e.eventDate")
     List<Event> getEventsByParametersUnauthorizedAvailable(String text,
                                                            List<Long> categories,

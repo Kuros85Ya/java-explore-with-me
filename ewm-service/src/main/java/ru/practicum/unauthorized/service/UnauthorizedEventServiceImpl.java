@@ -14,6 +14,7 @@ import ru.practicum.common.repository.EventRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,6 +54,7 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
     @Override
     public CommonSingleEventResponse getEventById(Long id) {
         Event event = repository.getEventByIdAndStatus(id, EventState.PUBLISHED.name());
+        if (event == null) throw new NoSuchElementException("Событие по id не найдено");
         return EventMapper.toEventResponseDto(event);
 
         //todo avtuman1 добавь отображение факта запроса информации по событию в статистику

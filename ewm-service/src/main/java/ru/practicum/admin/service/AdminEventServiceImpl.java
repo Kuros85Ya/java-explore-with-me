@@ -45,6 +45,8 @@ public class AdminEventServiceImpl implements AdminEventService {
                 parseDttm(rangeEnd),
                 pageRequest);
 
+
+
         return events
                 .stream()
                 .map(EventMapper::toEventResponseDto)

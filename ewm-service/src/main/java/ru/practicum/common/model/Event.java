@@ -4,7 +4,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -39,17 +41,21 @@ public class Event {
     @Column(name = "publication_dttm")
     private LocalDateTime publishedOn;
     private String status;
+    @ManyToMany(mappedBy = "events")
+    private List<Compilation> compilations;
+    @OneToMany(mappedBy="event")
+    private Set<Request> requests;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Event)) return false;
         Event event = (Event) o;
-        return Objects.equals(getId(), event.getId()) && Objects.equals(getAnnotation(), event.getAnnotation()) && Objects.equals(getDescription(), event.getDescription()) && Objects.equals(getEventDate(), event.getEventDate()) && Objects.equals(getLocationLatitude(), event.getLocationLatitude()) && Objects.equals(getLocationLongitude(), event.getLocationLongitude()) && Objects.equals(getPaid(), event.getPaid()) && Objects.equals(getParticipantLimit(), event.getParticipantLimit()) && Objects.equals(getRequestModeration(), event.getRequestModeration()) && Objects.equals(getTitle(), event.getTitle()) && Objects.equals(getCategory(), event.getCategory()) && Objects.equals(getCreator(), event.getCreator());
+        return Objects.equals(getId(), event.getId()) && Objects.equals(getAnnotation(), event.getAnnotation()) && Objects.equals(getDescription(), event.getDescription()) && Objects.equals(getEventDate(), event.getEventDate()) && Objects.equals(getLocationLatitude(), event.getLocationLatitude()) && Objects.equals(getLocationLongitude(), event.getLocationLongitude()) && Objects.equals(getPaid(), event.getPaid()) && Objects.equals(getParticipantLimit(), event.getParticipantLimit()) && Objects.equals(getRequestModeration(), event.getRequestModeration()) && Objects.equals(getTitle(), event.getTitle()) && Objects.equals(getCategory(), event.getCategory()) && Objects.equals(getCreator(), event.getCreator()) && Objects.equals(getCreatedOn(), event.getCreatedOn()) && Objects.equals(getPublishedOn(), event.getPublishedOn()) && Objects.equals(getStatus(), event.getStatus()) && Objects.equals(getCompilations(), event.getCompilations()) && Objects.equals(getRequests(), event.getRequests());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getAnnotation(), getDescription(), getEventDate(), getLocationLatitude(), getLocationLongitude(), getPaid(), getParticipantLimit(), getRequestModeration(), getTitle(), getCategory(), getCreator());
+        return Objects.hash(getId(), getAnnotation(), getDescription(), getEventDate(), getLocationLatitude(), getLocationLongitude(), getPaid(), getParticipantLimit(), getRequestModeration(), getTitle(), getCategory(), getCreator(), getCreatedOn(), getPublishedOn(), getStatus(), getCompilations(), getRequests());
     }
 }

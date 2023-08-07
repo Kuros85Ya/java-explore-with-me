@@ -22,6 +22,7 @@ public class Request {
     @ManyToOne
     private User requester;
     @ManyToOne
+    @JoinColumn(name="event_id", nullable=false)
     private Event event;
     private String status;
     private LocalDateTime created;

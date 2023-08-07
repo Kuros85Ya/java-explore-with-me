@@ -1,12 +1,12 @@
 package ru.practicum.unauthorized.service;
 
 import org.springframework.data.domain.PageRequest;
-import ru.practicum.unauthorized.dto.UnauthorizedCompilationResponseDto;
+import ru.practicum.common.dto.CompilationResponseDto;
 
 import java.util.List;
 
 public interface UnauthorizedCompilationService {
 
-    List<UnauthorizedCompilationResponseDto> getCompilations(Boolean pinned, PageRequest pageRequest);
-    UnauthorizedCompilationResponseDto getCompilationById(Long compId);
+    List<CompilationResponseDto> getCompilations(Boolean pinned, PageRequest pageRequest);
+    CompilationResponseDto getCompilationById(Long compId);
 }

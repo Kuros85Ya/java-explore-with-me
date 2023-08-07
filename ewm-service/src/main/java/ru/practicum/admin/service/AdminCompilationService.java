@@ -1,10 +1,11 @@
 package ru.practicum.admin.service;
 
 import ru.practicum.admin.dto.*;
+import ru.practicum.common.dto.CompilationResponseDto;
 
 public interface AdminCompilationService {
 
-    AdminCompilationResponseDto addCompilation(AdminCompilationRequestDto requestDto);
+    CompilationResponseDto addCompilation(AdminCompilationRequestDto requestDto);
     void deleteCompilation(Long compId);
-    AdminCompilationResponseDto patchCompilation(Long compId, AdminCompilationRequestDto requestDto);
+    CompilationResponseDto patchCompilation(Long compId, AdminCompilationRequestDto requestDto);
 }

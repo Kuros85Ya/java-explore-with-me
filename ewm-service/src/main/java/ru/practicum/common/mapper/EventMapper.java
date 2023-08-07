@@ -6,12 +6,14 @@ import ru.practicum.authorized.dto.AuthorizedEventRequestDto;
 import ru.practicum.common.dto.CommonSingleEventResponse;
 import ru.practicum.common.dto.Location;
 import ru.practicum.common.enums.EventState;
+import ru.practicum.common.enums.RequestStatus;
 import ru.practicum.common.enums.StateAction;
 import ru.practicum.common.model.Category;
 import ru.practicum.common.model.Event;
 import ru.practicum.common.model.User;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static ru.practicum.common.util.dttmToString;
 import static ru.practicum.common.util.parseDttm;
@@ -114,7 +116,9 @@ public class EventMapper {
                 event.getCreator(),
                 event.getCreatedOn(),
                 publishedOn,
-                newState.name()
+                newState.name(),
+                event.getCompilations(),
+                event.getRequests()
         );
     }
 
@@ -142,15 +146,24 @@ public class EventMapper {
                 user,
                 LocalDateTime.now(),
                 null,
-                state.name()
+                state.name(),
+                null,
+                null
         );
     }
 
     public static CommonSingleEventResponse toEventResponseDto(Event event) {
+        long confirmedRequests;
+        if (event.getRequests() == null) {
+            confirmedRequests = 0L;
+        } else {
+            confirmedRequests = event.getRequests().stream().filter(it -> Objects.equals(it.getStatus(), RequestStatus.CONFIRMED.name())).count();
+        }
+
         return new CommonSingleEventResponse(
                 event.getAnnotation(),
                 event.getCategory(),
-                null, //todo avtuman1 Когда добавятся реквесты, здесь появится метрика confirmedRequests
+                confirmedRequests,
                 dttmToString(event.getCreatedOn()),
                 event.getDescription(),
                 dttmToString(event.getEventDate()),
