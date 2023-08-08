@@ -12,10 +12,15 @@ import java.util.List;
 
 public interface AuthorizedEventService {
     List<CommonSingleEventResponse> getEventsByUserId(Long id, PageRequest pageRequest);
+
     CommonSingleEventResponse createEvent(Long userId, AuthorizedEventRequestDto requestDto);
+
     CommonSingleEventResponse getUserEventByEventId(Long userId, Long eventId);
+
     CommonSingleEventResponse patchEvent(Long userId, Long eventId, PatchEventRequestDto requestDto);
+
     List<AuthorizedRequestResponseDto> getUserEventRequest(Long userId, Long eventId);
+
     AuthorizedMultipleRequestsChangeResponseDto changeMultipleRequestStatus(Long userId, Long eventId, AuthorizedMultipleRequestsChangeRequestDto requestDto);
 }
 

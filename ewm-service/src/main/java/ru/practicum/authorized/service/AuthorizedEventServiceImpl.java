@@ -98,20 +98,24 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
                 .collect(Collectors.toList());
     }
 
-    /** Изменить можно только отмененные события или события в состоянии ожидания модерации (Ожидается код ошибки 409)
-     дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента (Ожидается код ошибки 409) **/
+    /**
+     * Изменить можно только отмененные события или события в состоянии ожидания модерации (Ожидается код ошибки 409)
+     * дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента (Ожидается код ошибки 409)
+     **/
     private void validateEventBeforePatching(Long userId, Event event) {
         if ((!Objects.equals(event.getCreator().getId(), userId)
-            || (Objects.equals(event.getStatus(), EventState.PUBLISHED.name())))
-            || (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2)))) {
+                || (Objects.equals(event.getStatus(), EventState.PUBLISHED.name())))
+                || (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2)))) {
             throw new DataIntegrityViolationException("Это событие не может быть изменено пользователем");
         }
     }
 
-    /**если для события лимит заявок равен 0 или отключена пре-модерация заявок, то подтверждение заявок не требуется
-     нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие (Ожидается код ошибки 409)
-     статус можно изменить только у заявок, находящихся в состоянии ожидания (Ожидается код ошибки 409)
-     если при подтверждении данной заявки, лимит заявок для события исчерпан, то все неподтверждённые заявки необходимо отклонить**/
+    /**
+     * если для события лимит заявок равен 0 или отключена пре-модерация заявок, то подтверждение заявок не требуется
+     * нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие (Ожидается код ошибки 409)
+     * статус можно изменить только у заявок, находящихся в состоянии ожидания (Ожидается код ошибки 409)
+     * если при подтверждении данной заявки, лимит заявок для события исчерпан, то все неподтверждённые заявки необходимо отклонить
+     **/
     private void validateRequestBeforeChangingStatus(Long userId, Event event, Request request) {
         if (!Objects.equals(event.getCreator().getId(), userId)
                 || (Objects.equals(event.getRequestModeration(), false))
@@ -124,7 +128,7 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
         Event event = findEventById(eventId);
         List<Request> requestsToApprove = requestRepository.getAllRequestsFromListOfIds(requestDto.getRequestIds());
         if (event.getParticipantLimit() != 0) {
-            if (event.getRequests().stream().filter(it-> Objects.equals(it.getStatus(), RequestStatus.CONFIRMED.name())).count() >= event.getParticipantLimit()) {
+            if (event.getRequests().stream().filter(it -> Objects.equals(it.getStatus(), RequestStatus.CONFIRMED.name())).count() >= event.getParticipantLimit()) {
                 throw new DataIntegrityViolationException("Достигнуто максимально возможное количество участников события");
             }
         }
@@ -177,7 +181,8 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
     }
 
     private void validateUserIsCreator(Long userId, Event event) {
-        if (!Objects.equals(userId, event.getCreator().getId())) throw new ValidationException("Пользователь " + userId +" не является создателем события "+ event.getId());
+        if (!Objects.equals(userId, event.getCreator().getId()))
+            throw new ValidationException("Пользователь " + userId + " не является создателем события " + event.getId());
     }
 
     public User findUserById(Long userId) {
@@ -192,6 +197,6 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
 
     public Event findEventById(Long eventId) {
         return repository.findById(eventId).orElseThrow(()
-            -> new NoSuchElementException("Событие с ID = " + eventId + " не найдено."));
+                -> new NoSuchElementException("Событие с ID = " + eventId + " не найдено."));
     }
 }
