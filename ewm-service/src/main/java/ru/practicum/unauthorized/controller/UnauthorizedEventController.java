@@ -14,8 +14,8 @@ import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ru.practicum.common.util.parseDttm;
-import static ru.practicum.common.util.toPageRequest;
+import static ru.practicum.common.Utils.parseDttm;
+import static ru.practicum.common.Utils.toPageRequest;
 
 @RestController
 @RequestMapping(path = "/events")

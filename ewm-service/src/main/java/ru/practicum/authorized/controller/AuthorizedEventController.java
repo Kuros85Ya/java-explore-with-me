@@ -17,7 +17,7 @@ import ru.practicum.common.dto.CommonSingleEventResponse;
 import javax.validation.Valid;
 import java.util.List;
 
-import static ru.practicum.common.util.toPageRequest;
+import static ru.practicum.common.Utils.toPageRequest;
 
 @RestController
 @RequestMapping(path = "/users")

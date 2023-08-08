@@ -8,5 +8,6 @@ import java.util.List;
 public interface UnauthorizedCompilationService {
 
     List<CompilationResponseDto> getCompilations(Boolean pinned, PageRequest pageRequest);
+
     CompilationResponseDto getCompilationById(Long compId);
 }

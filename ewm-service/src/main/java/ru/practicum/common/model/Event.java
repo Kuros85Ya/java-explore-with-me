@@ -43,7 +43,7 @@ public class Event {
     private String status;
     @ManyToMany(mappedBy = "events")
     private List<Compilation> compilations;
-    @OneToMany(mappedBy="event")
+    @OneToMany(mappedBy = "event")
     private Set<Request> requests;
 
     @Override

@@ -6,6 +6,8 @@ import ru.practicum.common.dto.CompilationResponseDto;
 public interface AdminCompilationService {
 
     CompilationResponseDto addCompilation(AdminCompilationPostRequestDto requestDto);
+
     void deleteCompilation(Long compId);
+
     CompilationResponseDto patchCompilation(Long compId, AdminCompilationPatchRequestDto requestDto);
 }

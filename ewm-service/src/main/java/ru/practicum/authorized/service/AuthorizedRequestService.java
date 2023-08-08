@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface AuthorizedRequestService {
     List<AuthorizedRequestResponseDto> getUserRequests(Long userId);
+
     AuthorizedRequestResponseDto addRequestToJoinEvent(Long userId, Long eventId);
+
     AuthorizedRequestResponseDto cancelRequestById(Long userId, Long requestId);
 
 }

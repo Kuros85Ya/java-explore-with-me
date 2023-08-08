@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.common.util.dttmToString;
+import static ru.practicum.common.Utils.dttmToString;
 
 public class StatsMapper {
-    private final static String APPLICATION = "ewm-service";
-    private final static LocalDateTime TIME_MAX = LocalDateTime.of(3000, 12, 1, 10, 1);
-    private final static LocalDateTime TIME_MIN = LocalDateTime.of(2000, 12, 1, 10, 1);
+    private static final String APPLICATION = "ewm-service";
+    private static final LocalDateTime TIME_MAX = LocalDateTime.of(3000, 12, 1, 10, 1);
+    private static final LocalDateTime TIME_MIN = LocalDateTime.of(2000, 12, 1, 10, 1);
 
     public static StatsGetRequestDto toStatsGetRequestDto(Event event, Boolean unique) {
         String eventPath = "/events/" + event.getId();

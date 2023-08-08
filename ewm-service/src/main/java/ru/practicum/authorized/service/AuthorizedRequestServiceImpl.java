@@ -52,7 +52,7 @@ public class AuthorizedRequestServiceImpl implements AuthorizedRequestService {
         }
 
         if (event.getParticipantLimit() != 0) {
-            if (event.getRequests().stream().filter(it-> Objects.equals(it.getStatus(), RequestStatus.CONFIRMED.name())).count() >= event.getParticipantLimit()) {
+            if (event.getRequests().stream().filter(it -> Objects.equals(it.getStatus(), RequestStatus.CONFIRMED.name())).count() >= event.getParticipantLimit()) {
                 throw new DataIntegrityViolationException("Достигнуто максимально возможное количество участников события");
             }
         }
@@ -71,7 +71,8 @@ public class AuthorizedRequestServiceImpl implements AuthorizedRequestService {
     }
 
     private void validateToBeCancelledRequest(Request request, Long userId) {
-        if (!Objects.equals(request.getRequester().getId(), userId)) throw new ValidationException("Этот пользователь не может изменять запрос");
+        if (!Objects.equals(request.getRequester().getId(), userId))
+            throw new ValidationException("Этот пользователь не может изменять запрос");
     }
 
     public Request findRequestById(Long id) {

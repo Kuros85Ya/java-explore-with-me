@@ -10,7 +10,7 @@ import ru.practicum.unauthorized.service.UnauthorizedCategoryService;
 
 import java.util.List;
 
-import static ru.practicum.common.util.toPageRequest;
+import static ru.practicum.common.Utils.toPageRequest;
 
 @RestController
 @RequestMapping(path = "/categories")

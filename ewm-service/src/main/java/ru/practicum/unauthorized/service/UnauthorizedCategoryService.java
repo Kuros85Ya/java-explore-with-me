@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface UnauthorizedCategoryService {
     List<CommonCategoryResponseDto> getCategories(PageRequest pageRequest);
+
     CommonCategoryResponseDto getCategoryById(Long id);
 
 }

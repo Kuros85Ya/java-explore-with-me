@@ -19,6 +19,7 @@ import javax.validation.Valid;
 public class AdminCategoryController {
 
     private final AdminCategoryService service;
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public CommonCategoryResponseDto addCategory(@RequestBody @Valid AdminCategoryRequestDto requestDto) {
@@ -29,7 +30,7 @@ public class AdminCategoryController {
     @DeleteMapping("/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable long catId) {
-    log.info("Удаление администратором категории {}", catId);
+        log.info("Удаление администратором категории {}", catId);
         service.deleteCategory(catId);
     }
 

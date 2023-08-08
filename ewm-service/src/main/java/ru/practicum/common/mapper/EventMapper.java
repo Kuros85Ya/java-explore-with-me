@@ -16,8 +16,8 @@ import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static ru.practicum.common.util.dttmToString;
-import static ru.practicum.common.util.parseDttm;
+import static ru.practicum.common.Utils.dttmToString;
+import static ru.practicum.common.Utils.parseDttm;
 
 public class EventMapper {
 

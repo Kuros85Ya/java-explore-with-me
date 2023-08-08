@@ -48,10 +48,9 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
 
         return events
                 .stream()
-                .map(it-> EventMapper.toEventResponseDto(it, eventViews.get(it.getId())))
+                .map(it -> EventMapper.toEventResponseDto(it, eventViews.get(it.getId())))
                 .collect(Collectors.toList());
     }
-
 
 
     @Override
