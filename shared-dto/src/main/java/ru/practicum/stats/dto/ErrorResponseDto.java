@@ -1,4 +1,4 @@
-package ru.practicum.common.exception;
+package ru.practicum.stats.dto;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;

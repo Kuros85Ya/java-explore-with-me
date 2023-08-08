@@ -33,7 +33,9 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
                                                      LocalDateTime rangeEnd,
                                                      Boolean onlyAvailable,
                                                      SortType sort,
-                                                     PageRequest pageRequest) {
+                                                     PageRequest pageRequest,
+                                                     String ip,
+                                                     String path) {
 
         List<Event> events;
         if (onlyAvailable) {
@@ -42,22 +44,22 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
             events = repository.getEventsByParametersUnauthorizedAll(text, categories, paid, rangeStart, rangeEnd, pageRequest);
         }
         Map<Long, Long> eventViews = service.getListEventViews(events);
+        service.saveNewEventView(ip, path);
 
         return events
                 .stream()
                 .map(it-> EventMapper.toEventResponseDto(it, eventViews.get(it.getId())))
                 .collect(Collectors.toList());
-
-        //todo avtuman1 сделай сортировку по частоте просмотров
     }
 
 
 
     @Override
-    public CommonSingleEventResponse getEventById(Long id) {
+    public CommonSingleEventResponse getEventById(Long id, String ip, String path) {
         Event event = repository.getEventByIdAndStatus(id, EventState.PUBLISHED.name());
         if (event == null) throw new NoSuchElementException("Событие по id не найдено");
-        Long views = service.saveNewEventView(event);
+        service.saveNewEventView(ip, path);
+        Long views = service.getEventView(event);
         return EventMapper.toEventResponseDto(event, views);
     }
 }

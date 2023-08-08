@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 import ru.practicum.stats.dto.StatsGetRequestDto;
+import ru.practicum.stats.dto.StatsGetResponseDto;
 import ru.practicum.stats.dto.StatsHitRequestDto;
+
+import java.util.List;
 
 @Service
 public class StatsClient extends BaseClient {
@@ -28,7 +31,7 @@ public class StatsClient extends BaseClient {
         return post("/hit", requestDto);
     }
 
-    public ResponseEntity<Object> getStats(StatsGetRequestDto requestDto) {
+    public List<StatsGetResponseDto> getStats(StatsGetRequestDto requestDto) {
         String path = UriComponentsBuilder.fromUriString("/stats")
                 .queryParam("start", requestDto.getStartDttm())
                 .queryParam("end", requestDto.getEndDttm())
@@ -37,6 +40,6 @@ public class StatsClient extends BaseClient {
                 .buildAndExpand()
                 .toUriString();
 
-        return get(path);
+        return getStats(path);
     }
 }

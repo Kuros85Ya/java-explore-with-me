@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface StatsService {
     Long getEventView(Event event);
-    Long saveNewEventView(Event event);
+    void saveNewEventView(String ip, String path);
 
     Map<Long, Long> getListEventViews(List<Event> events);
 }

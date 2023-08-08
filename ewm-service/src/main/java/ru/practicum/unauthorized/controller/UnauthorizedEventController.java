@@ -9,6 +9,7 @@ import ru.practicum.common.dto.CommonSingleEventResponse;
 import ru.practicum.common.enums.SortType;
 import ru.practicum.unauthorized.service.UnauthorizedEventService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,7 +36,8 @@ public class UnauthorizedEventController {
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
             @RequestParam(required = false) SortType sort,
             @RequestParam(defaultValue = "0") Integer from,
-            @RequestParam(defaultValue = "10") Integer size) {
+            @RequestParam(defaultValue = "10") Integer size,
+            HttpServletRequest request) {
         log.info("Поиск событий неавторизованным польозователем по параметрам text = {} categories = {} paid = {} rangeStart = {} rangeEnd = {} onlyAvailbale = {} sort = {}, from = {}, size = {}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         PageRequest pageRequest = toPageRequest(from, size);
@@ -58,12 +60,12 @@ public class UnauthorizedEventController {
             throw new ValidationException("Конец диапазона не может быть раньше начала");
         }
 
-        return service.getEvents(text, categories, paid, startDt, endDt, onlyAvailable, sort, pageRequest);
+        return service.getEvents(text, categories, paid, startDt, endDt, onlyAvailable, sort, pageRequest, request.getRemoteAddr(), request.getRequestURI());
     }
 
     @GetMapping("/{eventId}")
-    public CommonSingleEventResponse getEventById(@PathVariable Long eventId) {
-        log.info("Поиск события любым пользователем по id = {}", eventId);
-        return service.getEventById(eventId);
+    public CommonSingleEventResponse getEventById(@PathVariable Long eventId, HttpServletRequest request) {
+        log.info("Поиск события любым пользователем по id = {}, ip = {}, path = {}", eventId, request.getRemoteAddr(), request.getRequestURI());
+        return service.getEventById(eventId, request.getRemoteAddr(), request.getRequestURI());
     }
 }

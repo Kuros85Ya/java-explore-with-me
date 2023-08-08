@@ -22,8 +22,8 @@ public class StatsMapper {
     }
 
     public static StatsGetRequestDto toStatsRequestDto(String start, String end, Boolean unique, List<String> uris) {
-        return new StatsGetRequestDto(LocalDateTimeParser.parseDttm(start),
-                LocalDateTimeParser.parseDttm(end),
+        return new StatsGetRequestDto(start,
+                end,
                 unique,
                 uris);
     }

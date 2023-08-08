@@ -10,8 +10,12 @@ import ru.practicum.repository.StatsRepository;
 import ru.practicum.stats.dto.StatsGetRequestDto;
 import ru.practicum.stats.dto.StatsGetResponseDto;
 
+import javax.validation.ValidationException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static ru.practicum.util.LocalDateTimeParser.parseDttm;
 
 @Service
 @RequiredArgsConstructor
@@ -27,18 +31,24 @@ public class StatsServiceImpl implements StatsService {
     @Override
     public List<StatsGetResponseDto> getStats(StatsGetRequestDto requestDto) {
         List<StatDb> stats;
+        LocalDateTime startDt = parseDttm(requestDto.getStartDttm());
+        LocalDateTime endDt = parseDttm(requestDto.getEndDttm());
+
+        if (endDt.isBefore(startDt)) {
+            throw new ValidationException("Дата начала диапазона не может быть больше даты окончания");
+        }
 
         if (requestDto.getUris() != null && !requestDto.getUris().isEmpty()) {
             if (requestDto.getUnique()) {
-                stats = repository.getHitsByAppAndUrisUnique(requestDto.getStartDttm(), requestDto.getEndDttm(), requestDto.getUris());
+                stats = repository.getHitsByAppAndUrisUnique(startDt, endDt, requestDto.getUris());
             } else {
-                stats = repository.getHitsByAppAndUris(requestDto.getStartDttm(), requestDto.getEndDttm(), requestDto.getUris());
+                stats = repository.getHitsByAppAndUris(startDt, endDt, requestDto.getUris());
             }
         } else {
             if (requestDto.getUnique()) {
-                stats = repository.getHitsUnique(requestDto.getStartDttm(), requestDto.getEndDttm());
+                stats = repository.getHitsUnique(startDt, endDt);
             } else {
-                stats = repository.getHits(requestDto.getStartDttm(), requestDto.getEndDttm());
+                stats = repository.getHits(startDt, endDt);
             }
         }
         return stats.stream().map(StatsMapper::toStatsResponseDto).collect(Collectors.toList());

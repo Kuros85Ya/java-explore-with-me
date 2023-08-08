@@ -17,8 +17,9 @@ public interface UnauthorizedEventService {
             LocalDateTime rangeEnd,
             Boolean onlyAvailable,
             SortType sort,
-            PageRequest pageRequest
-    );
+            PageRequest pageRequest,
+            String ip,
+            String path);
 
-    CommonSingleEventResponse getEventById(Long id);
+    CommonSingleEventResponse getEventById(Long id, String ip, String path);
 }
