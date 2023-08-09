@@ -8,8 +8,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class CompilationResponseDto {
-    List<CommonSingleEventResponse> events;
-    Long id;
-    Boolean pinned;
-    String title;
+    private List<CommonSingleEventResponse> events;
+    private Long id;
+    private Boolean pinned;
+    private String title;
 }

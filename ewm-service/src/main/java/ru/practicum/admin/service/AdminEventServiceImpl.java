@@ -16,14 +16,13 @@ import ru.practicum.common.model.Event;
 import ru.practicum.common.repository.EventRepository;
 import ru.practicum.unauthorized.service.StatsService;
 
-import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static ru.practicum.common.Utils.parseDttm;
+import static ru.practicum.common.Utils.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,23 +40,10 @@ public class AdminEventServiceImpl implements AdminEventService {
                                                      String rangeStart,
                                                      String rangeEnd,
                                                      PageRequest pageRequest) {
-        LocalDateTime startDt;
-        if (rangeStart == null && rangeEnd == null) {
-            startDt = LocalDateTime.now();
-        } else {
-            startDt = parseDttm(rangeStart);
-        }
+        LocalDateTime startDt = setDefaultDt(rangeStart, LocalDateTime.now());
+        LocalDateTime endDt = setDefaultDt(rangeEnd, TIME_MAX);
+        validateTimeRange(startDt, endDt);
 
-        LocalDateTime endDt;
-        if (rangeEnd == null) {
-            endDt = LocalDateTime.of(3000, 12, 1, 10, 1);
-        } else {
-            endDt = parseDttm(rangeEnd);
-        }
-
-        if (endDt.isBefore(startDt)) {
-            throw new ValidationException("Конец диапазона не может быть раньше начала");
-        }
         List<Event> events = repository.getEventsByParameters(
                 users,
                 states,

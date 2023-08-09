@@ -10,5 +10,5 @@ public class AdminCategoryRequestDto {
     @Size(min = 1)
     @Size(max = 50)
     @NotBlank
-    String name;
+    private String name;
 }

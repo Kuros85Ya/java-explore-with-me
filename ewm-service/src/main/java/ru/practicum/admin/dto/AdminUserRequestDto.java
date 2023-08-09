@@ -12,9 +12,9 @@ public class AdminUserRequestDto {
    @Size(min = 6)
    @Size(max = 254)
    @Email
-   String email;
+   private String email;
    @Size(min = 2)
    @Size(max = 250)
    @NotBlank
-   String name;
+   private String name;
 }

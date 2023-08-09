@@ -8,10 +8,10 @@ import java.util.List;
 
 @Data
 public class AdminCompilationPostRequestDto {
-    List<Long> events;
-    Boolean pinned = false;
+    private List<Long> events;
+    private Boolean pinned = false;
     @NotBlank
     @Size(min = 1)
     @Size(max = 50)
-    String title;
+    private String title;
 }

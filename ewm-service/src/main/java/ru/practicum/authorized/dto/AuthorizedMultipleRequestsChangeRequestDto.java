@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 public class AuthorizedMultipleRequestsChangeRequestDto {
-    List<Long> requestIds;
-    RequestStatus status;
+    private List<Long> requestIds;
+    private RequestStatus status;
 }

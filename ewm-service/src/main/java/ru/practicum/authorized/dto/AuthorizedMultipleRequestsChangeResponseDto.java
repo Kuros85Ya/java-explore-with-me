@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class AuthorizedMultipleRequestsChangeResponseDto {
-    List<AuthorizedRequestResponseDto> confirmedRequests;
-    List<AuthorizedRequestResponseDto> rejectedRequests;
+    private List<AuthorizedRequestResponseDto> confirmedRequests;
+    private List<AuthorizedRequestResponseDto> rejectedRequests;
 }

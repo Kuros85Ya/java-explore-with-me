@@ -10,19 +10,19 @@ public class AuthorizedEventRequestDto {
     @NotBlank
     @Size(min = 20)
     @Size(max = 2000)
-    String annotation;
-    Long category;
-    String eventDate;
+    private String annotation;
+    private Long category;
+    private String eventDate;
     @NotBlank
     @Size(min = 20)
     @Size(max = 7000)
-    String description;
+    private String description;
     @NotNull
-    Location location;
-    Boolean paid = false;
-    Integer participantLimit = 0;
-    Boolean requestModeration = true;
+    private Location location;
+    private Boolean paid = false;
+    private Integer participantLimit = 0;
+    private Boolean requestModeration = true;
     @Size(min = 3)
     @Size(max = 120)
-    String title;
+    private String title;
 }

@@ -10,18 +10,18 @@ import javax.validation.constraints.Size;
 public class PatchEventRequestDto {
     @Size(min = 20)
     @Size(max = 2000)
-    String annotation;
-    Long category;
-    String eventDate;
+    private String annotation;
+    private Long category;
+    private String eventDate;
     @Size(min = 20)
     @Size(max = 7000)
-    String description;
-    Location location;
-    Boolean paid;
-    Integer participantLimit;
-    Boolean requestModeration;
-    StateAction stateAction;
+    private String description;
+    private Location location;
+    private Boolean paid;
+    private Integer participantLimit;
+    private Boolean requestModeration;
+    private StateAction stateAction;
     @Size(min = 3)
     @Size(max = 120)
-    String title;
+    private String title;
 }

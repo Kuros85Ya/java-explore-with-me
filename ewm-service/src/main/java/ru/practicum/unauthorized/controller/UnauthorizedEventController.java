@@ -10,11 +10,8 @@ import ru.practicum.common.enums.SortType;
 import ru.practicum.unauthorized.service.UnauthorizedEventService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ValidationException;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static ru.practicum.common.Utils.parseDttm;
 import static ru.practicum.common.Utils.toPageRequest;
 
 @RestController
@@ -41,26 +38,7 @@ public class UnauthorizedEventController {
         log.info("Поиск событий неавторизованным польозователем по параметрам text = {} categories = {} paid = {} rangeStart = {} rangeEnd = {} onlyAvailbale = {} sort = {}, from = {}, size = {}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         PageRequest pageRequest = toPageRequest(from, size);
-
-        LocalDateTime startDt;
-        if (rangeStart == null) {
-            startDt = LocalDateTime.now();
-        } else {
-            startDt = parseDttm(rangeStart);
-        }
-
-        LocalDateTime endDt;
-        if (rangeEnd == null) {
-            endDt = LocalDateTime.of(3000, 12, 1, 10, 1);
-        } else {
-            endDt = parseDttm(rangeEnd);
-        }
-
-        if (endDt.isBefore(startDt)) {
-            throw new ValidationException("Конец диапазона не может быть раньше начала");
-        }
-
-        return service.getEvents(text, categories, paid, startDt, endDt, onlyAvailable, sort, pageRequest, request.getRemoteAddr(), request.getRequestURI());
+        return service.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, pageRequest, request.getRemoteAddr(), request.getRequestURI());
     }
 
     @GetMapping("/{eventId}")

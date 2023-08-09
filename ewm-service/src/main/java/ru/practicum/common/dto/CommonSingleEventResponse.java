@@ -9,20 +9,20 @@ import ru.practicum.common.model.Category;
 @Data
 @AllArgsConstructor
 public class CommonSingleEventResponse {
-    String annotation;
-    Category category;
-    Long confirmedRequests;
-    String createdOn; // 2022-09-06 11:00:23
-    String description;
-    String eventDate; // 2024-12-31 15:10:05
-    Long id;
-    AdminEventInitiator initiator;
-    Location location;
-    Boolean paid;
-    Integer participantLimit;
-    String publishedOn; //"2022-09-06 15:10:05"
-    Boolean requestModeration;
-    EventState state;
-    String title;
-    Long views;
+    private String annotation;
+    private Category category;
+    private Long confirmedRequests;
+    private String createdOn;
+    private String description;
+    private String eventDate;
+    private Long id;
+    private AdminEventInitiator initiator;
+    private Location location;
+    private Boolean paid;
+    private Integer participantLimit;
+    private String publishedOn;
+    private Boolean requestModeration;
+    private EventState state;
+    private String title;
+    private Long views;
 }

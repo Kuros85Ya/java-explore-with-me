@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface AdminEventService {
 
-    /**Добавление категории событий. Имя категории должно быть уникальным**/
     List<CommonSingleEventResponse> getEvents(
             List<Long> users,
             List<String> states,

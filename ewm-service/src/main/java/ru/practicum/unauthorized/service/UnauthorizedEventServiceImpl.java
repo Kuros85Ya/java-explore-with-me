@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import static ru.practicum.common.Utils.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,19 +31,23 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
     public List<CommonSingleEventResponse> getEvents(String text,
                                                      List<Long> categories,
                                                      Boolean paid,
-                                                     LocalDateTime rangeStart,
-                                                     LocalDateTime rangeEnd,
+                                                     String rangeStart,
+                                                     String rangeEnd,
                                                      Boolean onlyAvailable,
                                                      SortType sort,
                                                      PageRequest pageRequest,
                                                      String ip,
                                                      String path) {
 
+        LocalDateTime startDt = setDefaultDt(rangeStart, LocalDateTime.now());
+        LocalDateTime endDt = setDefaultDt(rangeEnd, TIME_MAX);
+        validateTimeRange(endDt, startDt);
+
         List<Event> events;
         if (onlyAvailable) {
-            events = repository.getEventsByParametersUnauthorizedAvailable(text, categories, paid, rangeStart, rangeEnd, pageRequest);
+            events = repository.getEventsByParametersUnauthorizedAvailable(text, categories, paid, startDt, endDt, pageRequest);
         } else {
-            events = repository.getEventsByParametersUnauthorizedAll(text, categories, paid, rangeStart, rangeEnd, pageRequest);
+            events = repository.getEventsByParametersUnauthorizedAll(text, categories, paid, startDt, endDt, pageRequest);
         }
         Map<Long, Long> eventViews = service.getListEventViews(events);
         service.saveNewEventView(ip, path);
