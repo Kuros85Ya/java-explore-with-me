@@ -21,21 +21,15 @@ public class ErrorHandler {
         return new ErrorResponseDto(HttpStatus.BAD_REQUEST, "Incorrectly made request.", e.getMessage(), LocalDateTime.now());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({NoSuchElementException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponseDto handleNotFoundException(final NoSuchElementException e) {
         return new ErrorResponseDto(HttpStatus.NOT_FOUND, "The required object was not found.", e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponseDto handleNotFoundExceptionOther(final EmptyResultDataAccessException e) {
-        return new ErrorResponseDto(HttpStatus.NOT_FOUND, "The required object was not found.", e.getMessage(), LocalDateTime.now());
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponseDto handleUnsupportedOperation(final DataIntegrityViolationException e) {
-        return new ErrorResponseDto(HttpStatus.CONFLICT, "The required object was not found.", e.getMessage(), LocalDateTime.now());
+        return new ErrorResponseDto(HttpStatus.CONFLICT, "Integrity constraint has been violated.", e.getMessage(), LocalDateTime.now());
     }
 }

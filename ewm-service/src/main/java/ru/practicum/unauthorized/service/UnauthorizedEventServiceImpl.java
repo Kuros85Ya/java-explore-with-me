@@ -41,7 +41,7 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
 
         LocalDateTime startDt = setDefaultDt(rangeStart, LocalDateTime.now());
         LocalDateTime endDt = setDefaultDt(rangeEnd, TIME_MAX);
-        validateTimeRange(endDt, startDt);
+        validateTimeRange(startDt, endDt);
 
         List<Event> events;
         if (onlyAvailable) {
