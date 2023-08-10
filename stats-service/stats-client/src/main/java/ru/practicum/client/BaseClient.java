@@ -4,8 +4,12 @@ import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import ru.practicum.stats.dto.StatsGetResponseDto;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BaseClient {
     protected final RestTemplate rest;
@@ -16,6 +20,18 @@ public class BaseClient {
 
     protected ResponseEntity<Object> get(String path) {
         return makeAndSendRequest(HttpMethod.GET, path,null);
+    }
+
+    protected List<StatsGetResponseDto> getStats(String path) {
+        ResponseEntity<StatsGetResponseDto[]> responseEntity =
+                rest.getForEntity(path, StatsGetResponseDto[].class);
+        StatsGetResponseDto[] statsArray = responseEntity.getBody();
+        if (statsArray == null) {
+            return Collections.emptyList();
+        } else {
+            return Arrays.stream(statsArray)
+                    .collect(Collectors.toList());
+        }
     }
 
     protected <T> ResponseEntity<Object> post(String path, T body) {

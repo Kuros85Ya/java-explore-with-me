@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -14,9 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class StatsGetRequestDto {
     @NotEmpty
-    private LocalDateTime startDttm;
+    private String startDttm;
     @NotEmpty
-    private LocalDateTime endDttm;
+    private String endDttm;
     @NotNull
     private Boolean unique;
     private List<String> uris;
