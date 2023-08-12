@@ -31,6 +31,9 @@ public class UnauthorizedEventController {
             @RequestParam(required = false) String rangeStart,
             @RequestParam(required = false) String rangeEnd,
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
+            @RequestParam(required = false) Float latitude,
+            @RequestParam(required = false) Float longitude,
+            @RequestParam(required = false) Long maxDistance,
             @RequestParam(required = false) SortType sort,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size,
@@ -38,7 +41,7 @@ public class UnauthorizedEventController {
         log.info("Поиск событий неавторизованным польозователем по параметрам text = {} categories = {} paid = {} rangeStart = {} rangeEnd = {} onlyAvailbale = {} sort = {}, from = {}, size = {}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         PageRequest pageRequest = toPageRequest(from, size);
-        return service.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, pageRequest, request.getRemoteAddr(), request.getRequestURI());
+        return service.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, latitude, longitude, maxDistance, sort, pageRequest, request.getRemoteAddr(), request.getRequestURI());
     }
 
     @GetMapping("/{eventId}")

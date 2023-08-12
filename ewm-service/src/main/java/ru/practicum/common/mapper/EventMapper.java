@@ -21,7 +21,7 @@ import static ru.practicum.common.Utils.parseDttm;
 
 public class EventMapper {
 
-    public static Event patchRequestToEvent(Event event, Category category, PatchEventRequestDto requestDto) {
+    public static Event patchRequestToEvent(Event event, Category category, PatchEventRequestDto requestDto, ru.practicum.common.model.Location location) {
         EventState newState;
         if (requestDto.getStateAction() == StateAction.PUBLISH_EVENT) {
             newState = EventState.PUBLISHED;
@@ -65,17 +65,12 @@ public class EventMapper {
             }
         }
 
-        Float latitude;
-        if (requestDto.getLocation() == null || requestDto.getLocation().getLat() == null) {
-            latitude = event.getLocationLatitude();
+        ru.practicum.common.model.Location newLocation;
+        if (location == null) {
+            newLocation = event.getLocation();
         } else {
-            latitude = requestDto.getLocation().getLat();
+            newLocation = location;
         }
-
-        Float longitude;
-        if (requestDto.getLocation() == null || requestDto.getLocation().getLon() == null) {
-            longitude = event.getLocationLongitude();
-        } else longitude = requestDto.getLocation().getLon();
 
         Boolean paid;
         if (requestDto.getPaid() == null) {
@@ -117,8 +112,7 @@ public class EventMapper {
                 annotation,
                 description,
                 eventDate,
-                latitude,
-                longitude,
+                newLocation,
                 paid,
                 limit,
                 requestModeration,
@@ -133,7 +127,7 @@ public class EventMapper {
         );
     }
 
-    public static Event toEvent(User user, Category category, AuthorizedEventRequestDto requestDto) {
+    public static Event toEvent(User user, Category category, AuthorizedEventRequestDto requestDto, ru.practicum.common.model.Location location) {
         LocalDateTime eventDate = parseDttm(requestDto.getEventDate());
         if (eventDate.isBefore(LocalDateTime.now())) {
             throw new ValidationException("Дата события не может быть в прошлом");
@@ -146,8 +140,7 @@ public class EventMapper {
                 requestDto.getAnnotation(),
                 requestDto.getDescription(),
                 eventDate,
-                requestDto.getLocation().getLat(),
-                requestDto.getLocation().getLon(),
+                location,
                 requestDto.getPaid(),
                 requestDto.getParticipantLimit(),
                 requestDto.getRequestModeration(),
@@ -179,7 +172,7 @@ public class EventMapper {
                 dttmToString(event.getEventDate()),
                 event.getId(),
                 new AdminEventInitiator(event.getCreator().getId(), event.getCreator().getName()),
-                new Location(event.getLocationLatitude(), event.getLocationLongitude()),
+                new Location(event.getLocation().getLatitude(), event.getLocation().getLongitude()),
                 event.getPaid(),
                 event.getParticipantLimit(),
                 dttmToString(event.getPublishedOn()),

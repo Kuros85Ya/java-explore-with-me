@@ -22,10 +22,8 @@ public class Event {
     private String description;
     @Column(name = "event_date")
     private LocalDateTime eventDate;
-    @Column(name = "location_latitude")
-    private Float locationLatitude;
-    @Column(name = "location_longitude")
-    private Float locationLongitude;
+    @ManyToOne
+    private Location location;
     private Boolean paid;
     @Column(name = "participant_limit")
     private Integer participantLimit;
@@ -51,12 +49,12 @@ public class Event {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return Objects.equals(getId(), event.getId()) && Objects.equals(getAnnotation(), event.getAnnotation()) && Objects.equals(getDescription(), event.getDescription()) && Objects.equals(getEventDate(), event.getEventDate()) && Objects.equals(getLocationLatitude(), event.getLocationLatitude()) && Objects.equals(getLocationLongitude(), event.getLocationLongitude()) && Objects.equals(getPaid(), event.getPaid()) && Objects.equals(getParticipantLimit(), event.getParticipantLimit()) && Objects.equals(getRequestModeration(), event.getRequestModeration()) && Objects.equals(getTitle(), event.getTitle()) && Objects.equals(getCategory(), event.getCategory()) && Objects.equals(getCreator(), event.getCreator()) && Objects.equals(getCreatedOn(), event.getCreatedOn()) && Objects.equals(getPublishedOn(), event.getPublishedOn()) && Objects.equals(getStatus(), event.getStatus());
+        return Objects.equals(getId(), event.getId()) && Objects.equals(getAnnotation(), event.getAnnotation()) && Objects.equals(getDescription(), event.getDescription()) && Objects.equals(getEventDate(), event.getEventDate()) && Objects.equals(getLocation(), event.getLocation()) && Objects.equals(getPaid(), event.getPaid()) && Objects.equals(getParticipantLimit(), event.getParticipantLimit()) && Objects.equals(getRequestModeration(), event.getRequestModeration()) && Objects.equals(getTitle(), event.getTitle()) && Objects.equals(getCategory(), event.getCategory()) && Objects.equals(getCreator(), event.getCreator()) && Objects.equals(getCreatedOn(), event.getCreatedOn()) && Objects.equals(getPublishedOn(), event.getPublishedOn()) && Objects.equals(getStatus(), event.getStatus());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getAnnotation(), getDescription(), getEventDate(), getLocationLatitude(), getLocationLongitude(), getPaid(), getParticipantLimit(), getRequestModeration(), getTitle(), getCategory(), getCreator(), getCreatedOn(), getPublishedOn(), getStatus());
+        return Objects.hash(getId(), getAnnotation(), getDescription(), getEventDate(), getLocation(), getPaid(), getParticipantLimit(), getRequestModeration(), getTitle(), getCategory(), getCreator(), getCreatedOn(), getPublishedOn(), getStatus());
     }
 
     @Override
@@ -66,8 +64,7 @@ public class Event {
                 ", annotation='" + annotation + '\'' +
                 ", description='" + description + '\'' +
                 ", eventDate=" + eventDate +
-                ", locationLatitude=" + locationLatitude +
-                ", locationLongitude=" + locationLongitude +
+                ", location=" + location +
                 ", paid=" + paid +
                 ", participantLimit=" + participantLimit +
                 ", requestModeration=" + requestModeration +

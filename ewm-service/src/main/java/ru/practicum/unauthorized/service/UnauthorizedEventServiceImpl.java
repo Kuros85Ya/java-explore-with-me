@@ -34,6 +34,9 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
                                                      String rangeStart,
                                                      String rangeEnd,
                                                      Boolean onlyAvailable,
+                                                     Float latitude,
+                                                     Float longitude,
+                                                     Long maxDistance,
                                                      SortType sort,
                                                      PageRequest pageRequest,
                                                      String ip,
@@ -45,9 +48,9 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
 
         List<Event> events;
         if (onlyAvailable) {
-            events = repository.getEventsByParametersUnauthorizedAvailable(text, categories, paid, startDt, endDt, pageRequest);
+            events = repository.getEventsByParametersUnauthorizedAvailable(text, categories, paid, startDt, endDt, latitude, longitude, maxDistance, pageRequest);
         } else {
-            events = repository.getEventsByParametersUnauthorizedAll(text, categories, paid, startDt, endDt, pageRequest);
+            events = repository.getEventsByParametersUnauthorizedAll(text, categories, paid, startDt, endDt, latitude, longitude, maxDistance, pageRequest);
         }
         Map<Long, Long> eventViews = service.getListEventViews(events);
         service.saveNewEventView(ip, path);
