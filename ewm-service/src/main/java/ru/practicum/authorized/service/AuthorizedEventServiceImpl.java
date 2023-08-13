@@ -212,7 +212,7 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
             }
         } else if (isLastVisited) {
             List<Event> lastVisitedEvents = repository.getVisitedEventsByUserId(userId);
-            if (lastVisitedEvents == null) {
+            if (lastVisitedEvents == null || lastVisitedEvents.isEmpty()) {
                 throw new NoSuchElementException("Нет информации о локации пользователя. Нужно отправить заявку на участие хотя бы в одном событии");
             } else {
                 Event lastVisitedEvent = lastVisitedEvents.get(0);
