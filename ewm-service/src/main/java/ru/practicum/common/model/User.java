@@ -20,12 +20,6 @@ public class User {
     private String name;
     @NotEmpty
     private String email;
-    @ManyToOne
-    @JoinColumn(name = "favorite_location_id")
-    private Location favoriteLocation;
-    @ManyToOne
-    @JoinColumn(name = "last_visited_location_id")
-    private Location lastVisitedLocation;
 
     @Override
     public boolean equals(Object o) {

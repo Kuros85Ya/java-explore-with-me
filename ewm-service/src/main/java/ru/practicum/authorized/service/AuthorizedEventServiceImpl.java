@@ -50,6 +50,18 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
     }
 
     @Override
+    public List<CommonSingleEventResponse> getEventsByUserLocation(Long userId, Boolean isNearFavorite, Boolean isNearLastVisited, Long maxValue, PageRequest pageRequest) {
+        User creator = findUserById(userId);
+        AverageLocation location = getLocationOfInterestByUserId(creator.getId(), isNearFavorite, isNearLastVisited);
+        List<Event> events = repository.getEventsByLocationPageable(location.getLatitude().floatValue(), location.getLongitude().floatValue(), maxValue, pageRequest);
+        Map<Long, Long> eventViews = service.getListEventViews(events);
+        return events
+                .stream()
+                .map(it -> EventMapper.toEventResponseDto(it, eventViews.get(it.getId())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public CommonSingleEventResponse createEvent(Long userId, AuthorizedEventRequestDto requestDto) {
         User user = findUserById(userId);
         Category category = findCategoryById(requestDto.getCategory());
@@ -186,6 +198,30 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
             modifiedRequests.add(RequestMapper.toChangedStatusPatchRequest(r, RequestStatus.REJECTED));
         }
         return modifiedRequests;
+    }
+
+    private AverageLocation getLocationOfInterestByUserId(Long userId, Boolean isFavorite, Boolean isLastVisited) {
+        AverageLocation averageLocation;
+
+        if (isFavorite && isLastVisited) {
+            throw new ValidationException("Нужно выбрать один признак для поиска isNearFavorite или isNearLastVisited, а не оба одновременно");
+        } else if (isFavorite) {
+            averageLocation = locationRepository.getFavoriteLocationByUserId(userId);
+            if (averageLocation == null) {
+                throw new NoSuchElementException("Нет информации о локации пользователя. Нужно отправить заявку на участие хотя бы в одном событии");
+            }
+        } else if (isLastVisited) {
+            List<Event> lastVisitedEvents = repository.getVisitedEventsByUserId(userId);
+            if (lastVisitedEvents == null) {
+                throw new NoSuchElementException("Нет информации о локации пользователя. Нужно отправить заявку на участие хотя бы в одном событии");
+            } else {
+                Event lastVisitedEvent = lastVisitedEvents.get(0);
+                averageLocation = new AverageLocation(lastVisitedEvent.getLocation().getLatitude().doubleValue(), lastVisitedEvent.getLocation().getLongitude().doubleValue());
+            }
+        } else {
+            throw new ValidationException("Нужно выбрать хотя бы один признак для поиска isNearFavorite или isNearLastVisited");
+        }
+        return averageLocation;
     }
 
     private void validateUserIsCreator(Long userId, Event event) {

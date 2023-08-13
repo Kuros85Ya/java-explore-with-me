@@ -61,7 +61,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "and e.status = 'PUBLISHED' " +
             "and e.eventDate > :rangeStart " +
             "and e.eventDate < :rangeEnd " +
-            "and (:latitude is null OR :longitude is null OR :maxDistance is null) OR (distance(e.location.latitude, e.location.longitude, :latitude, :longitude) < :maxDistance) " +
+            "and (:latitude is null OR :longitude is null OR :maxDistance is null) " +
+            "OR (distance(e.location.latitude, e.location.longitude, :latitude, :longitude) < :maxDistance) " +
             "order by e.eventDate")
     List<Event> getEventsByParametersUnauthorizedAll(String text,
                                                      List<Long> categories,
@@ -74,8 +75,30 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                                      PageRequest pageRequest
     );
 
+    @Query("select e from Event as e " +
+            "where e.status = 'PUBLISHED' " +
+            "and e.eventDate > now() " +
+            "and (:latitude is null OR :longitude is null OR :maxDistance is null) " +
+            "OR (distance(e.location.latitude, e.location.longitude, :latitude, :longitude) < :maxDistance) " +
+            "order by e.eventDate")
+    List<Event> getEventsByLocationPageable(Float latitude, Float longitude, Long maxDistance, PageRequest pageRequest);
+
+    @Query("select e from Event as e " +
+            "where e.status = 'PUBLISHED' " +
+            "and e.eventDate > now() " +
+            "and (:latitude is null OR :longitude is null OR :maxDistance is null) " +
+            "OR (distance(e.location.latitude, e.location.longitude, :latitude, :longitude) < :maxDistance) " +
+            "order by e.eventDate")
+    List<Event> getEventsByLocationAll(Float latitude, Float longitude, Long maxDistance);
+
     Event getEventByIdAndStatus(Long id, String status);
 
     Event getEventByIdAndCreator(Long id, User creator);
+
+    @Query("select e from Event as e " +
+            "join Request r on r.event.id = r.id " +
+            "where r.requester.id = :userId " +
+            "order by r.created desc ")
+    List<Event> getVisitedEventsByUserId(Long userId);
 
 }

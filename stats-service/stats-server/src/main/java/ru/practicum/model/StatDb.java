@@ -1,9 +1,16 @@
 package ru.practicum.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class StatDb {
     @Id
@@ -16,21 +23,5 @@ public class StatDb {
         this.app = app;
         this.uri = uri;
         this.count = count;
-    }
-
-    public StatDb() {
-
-    }
-
-    public String getApp() {
-        return app;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public Long getCount() {
-        return count;
     }
 }
