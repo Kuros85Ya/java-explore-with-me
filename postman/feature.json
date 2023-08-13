@@ -726,8 +726,8 @@
 											"    getLocation() {\r",
 											"        return {\r",
 											"            description: pm.variables.replaceIn('{{$randomFullName}}'),\r",
-											"            latitude: 10,\r",
-											"            longitude: -10\r",
+											"            latitude: 70,\r",
+											"            longitude: -70\r",
 											"        };\r",
 											"    }\r",
 											"    }\r",
@@ -800,8 +800,8 @@
 											"});\r",
 											"\r",
 											"pm.test(\"Широта должна остаться той же, что и была\", function () {\r",
-											"    pm.expect(10).equal(target.latitude, 'Широта должна остаться старой');\r",
-											"    pm.expect(-10).equal(target.longitude, 'Долгота должна остаться старой');\r",
+											"    pm.expect(70).equal(target.latitude, 'Широта должна остаться старой');\r",
+											"    pm.expect(-70).equal(target.longitude, 'Долгота должна остаться старой');\r",
 											"});"
 										],
 										"type": "text/javascript"
