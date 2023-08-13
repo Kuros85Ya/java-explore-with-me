@@ -11,6 +11,7 @@ import ru.practicum.common.mapper.EventMapper;
 import ru.practicum.common.model.Event;
 import ru.practicum.common.repository.EventRepository;
 
+import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,10 @@ public class UnauthorizedEventServiceImpl implements UnauthorizedEventService {
         LocalDateTime startDt = setDefaultDt(rangeStart, LocalDateTime.now());
         LocalDateTime endDt = setDefaultDt(rangeEnd, TIME_MAX);
         validateTimeRange(startDt, endDt);
+
+        if ((latitude == null && longitude != null) || (longitude == null && latitude != null)) {
+            throw new ValidationException("Если нужен поиск по координатам, нужно указать как широту, так и долготу");
+        }
 
         List<Event> events;
         if (onlyAvailable) {

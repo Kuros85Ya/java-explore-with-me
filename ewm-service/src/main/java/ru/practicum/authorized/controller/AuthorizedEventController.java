@@ -41,7 +41,7 @@ public class AuthorizedEventController {
     public List<CommonSingleEventResponse> getEventsNearLocationByUserId(@PathVariable Long userId,
                                                             @RequestParam(defaultValue = "false") Boolean isNearFavorite,
                                                             @RequestParam(defaultValue = "false") Boolean isNearLastVisited,
-                                                            @RequestParam(defaultValue = "100") Long maxDistance,
+                                                            @RequestParam(defaultValue = "1000") Long maxDistance,
                                                             @RequestParam(defaultValue = "0") Integer from,
                                                             @RequestParam(defaultValue = "10") Integer size) {
         log.info("Запрос авторизованным пользователем событий по userId = {}, from = {}, size = {}", userId, from, size);

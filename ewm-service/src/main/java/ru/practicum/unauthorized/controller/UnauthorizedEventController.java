@@ -33,7 +33,7 @@ public class UnauthorizedEventController {
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
             @RequestParam(required = false) Float latitude,
             @RequestParam(required = false) Float longitude,
-            @RequestParam(required = false) Long maxDistance,
+            @RequestParam(defaultValue = "1000") Long maxDistance,
             @RequestParam(required = false) SortType sort,
             @RequestParam(defaultValue = "0") Integer from,
             @RequestParam(defaultValue = "10") Integer size,

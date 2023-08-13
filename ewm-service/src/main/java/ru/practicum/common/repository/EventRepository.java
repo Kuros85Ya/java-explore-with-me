@@ -35,7 +35,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "and e.status = 'PUBLISHED' " +
             "and e.eventDate > :rangeStart " +
             "and e.eventDate < :rangeEnd " +
-            "and (:latitude is null OR :longitude is null OR :maxDistance is null ) OR (distance(e.location.latitude, e.location.longitude, :latitude, :longitude) < :maxDistance) " +
+            "and ((:latitude is null OR :longitude is null OR :maxDistance is null ) " +
+            "OR (distance(e.location.latitude, e.location.longitude, :latitude, :longitude) < :maxDistance)) " +
             "and e.participantLimit >" +
             "      (select count(*) " +
             "       from Request as r" +
@@ -54,15 +55,15 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     );
 
     @Query("select e from Event as e " +
-            "where (upper(e.description) like upper( '%' || :text || '%')) " +
-            "or upper(e.annotation) like upper( '%' || :text || '%') " +
+            "where ((upper(e.description) like upper( '%' || :text || '%')) " +
+            "or upper(e.annotation) like upper( '%' || :text || '%')) " +
             "and (:categories is null OR e.category.id in (:categories)) " +
             "and (:paid is null OR e.paid = :paid) " +
             "and e.status = 'PUBLISHED' " +
             "and e.eventDate > :rangeStart " +
             "and e.eventDate < :rangeEnd " +
-            "and (:latitude is null OR :longitude is null OR :maxDistance is null) " +
-            "OR (distance(e.location.latitude, e.location.longitude, :latitude, :longitude) < :maxDistance) " +
+            "and ((:latitude is null OR :longitude is null OR :maxDistance is null) " +
+            "OR (distance(e.location.latitude, e.location.longitude, :latitude, :longitude) < :maxDistance)) " +
             "order by e.eventDate")
     List<Event> getEventsByParametersUnauthorizedAll(String text,
                                                      List<Long> categories,

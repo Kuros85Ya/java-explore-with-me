@@ -590,6 +590,776 @@
 					]
 				},
 				{
+					"name": "Authorized Get Events By User Location",
+					"item": [
+						{
+							"name": "Получить события рядом с любимой на данной момент точкой пользователя",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    class GetLocation {\r",
+											"    getLocation() {\r",
+											"        return {\r",
+											"            description: pm.variables.replaceIn('{{$randomFullName}}'),\r",
+											"            latitude: 2,\r",
+											"            longitude: 2\r",
+											"        };\r",
+											"    }\r",
+											"    }\r",
+											"    const loc = new GetLocation();\r",
+											"\r",
+											"    try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        pm.collectionVariables.set(\"uid\", user.id)\r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        let event1 = await api.addEvent(user.id, rnd.getEventWithLocation(1, 1, category.id));\r",
+											"        let event2 = await api.addEvent(user.id, rnd.getEventWithLocation(3, 3, category.id));\r",
+											"        let event3 = await api.addEvent(user.id, rnd.getEventWithLocation(11000, -11000, category.id));\r",
+											"        event1 = await api.publishEvent(event1.id);\r",
+											"        event2 = await api.publishEvent(event2.id);\r",
+											"        event3 = await api.publishEvent(event3.id);\r",
+											"\r",
+											"        const submittedUser = await api.addUser(rnd.getUser());\r",
+											"        const requestToJoin1 = await api.publishParticipationRequest(event1.id, submittedUser.id);\r",
+											"        const requestToJoin2 = await api.publishParticipationRequest(event2.id, submittedUser.id);\r",
+											"        pm.collectionVariables.set(\"userId\", Number(submittedUser.id))\r",
+											"\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"\r",
+											"    let location;\r",
+											"    try {\r",
+											"        location = loc.getLocation();\r",
+											"        location = await api.addLocation(location);\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											"\r",
+											"const target = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Событий должно быть только 2. Это события происходящие близко от поисковой точки\", function () {\r",
+											"    pm.expect(target.length).equal(2);\r",
+											"    pm.expect(target[0].location.lat).equal(1);\r",
+											"    pm.expect(target[1].location.lon).equal(3);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/:userId/events/locations?isNearFavorite=true",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":userId",
+										"events",
+										"locations"
+									],
+									"query": [
+										{
+											"key": "isNearFavorite",
+											"value": "true"
+										}
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										}
+									]
+								},
+								"description": "Обратите внимание: имя категории должно быть уникальным"
+							},
+							"response": []
+						},
+						{
+							"name": "Получить события рядом с последней посещенной точкой пользователя",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    class GetLocation {\r",
+											"    getLocation() {\r",
+											"        return {\r",
+											"            description: pm.variables.replaceIn('{{$randomFullName}}'),\r",
+											"            latitude: 10001,\r",
+											"            longitude: -10002\r",
+											"        };\r",
+											"    }\r",
+											"    }\r",
+											"    const loc = new GetLocation();\r",
+											"\r",
+											"    try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        pm.collectionVariables.set(\"uid\", user.id)\r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        let event1 = await api.addEvent(user.id, rnd.getEventWithLocation(-17, -17, category.id));\r",
+											"        let event2 = await api.addEvent(user.id, rnd.getEventWithLocation(-16, -16, category.id));\r",
+											"        let event3 = await api.addEvent(user.id, rnd.getEventWithLocation(10000, -10000, category.id));\r",
+											"        event1 = await api.publishEvent(event1.id);\r",
+											"        event2 = await api.publishEvent(event2.id);\r",
+											"        event3 = await api.publishEvent(event3.id);\r",
+											"\r",
+											"        const submittedUser = await api.addUser(rnd.getUser());\r",
+											"        const requestToJoin1 = await api.publishParticipationRequest(event1.id, submittedUser.id);\r",
+											"        const requestToJoin2 = await api.publishParticipationRequest(event2.id, submittedUser.id);\r",
+											"        const requestToJoin3 = await api.publishParticipationRequest(event3.id, submittedUser.id);\r",
+											"        pm.collectionVariables.set(\"userId\", Number(submittedUser.id))\r",
+											"\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"\r",
+											"    let location;\r",
+											"    try {\r",
+											"        location = loc.getLocation();\r",
+											"        location = await api.addLocation(location);\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											"\r",
+											"const target = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Событий должно быть только 1. Это события происходящие близко от последней затребованной точки\", function () {\r",
+											"    pm.expect(target.length).equal(1);\r",
+											"    pm.expect(target[0].location.lat).equal(10000);\r",
+											"    pm.expect(target[0].location.lon).equal(-10000);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/:userId/events/locations?isNearLastVisited=true",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":userId",
+										"events",
+										"locations"
+									],
+									"query": [
+										{
+											"key": "isNearLastVisited",
+											"value": "true"
+										}
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										}
+									]
+								},
+								"description": "Обратите внимание: имя категории должно быть уникальным"
+							},
+							"response": []
+						},
+						{
+							"name": "Получить события пользователя по двум точкам одновременно",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        pm.collectionVariables.set(\"uid\", user.id)\r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        let event1 = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        let event2 = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        let event3 = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        event1 = await api.publishEvent(event1.id);\r",
+											"        event2 = await api.publishEvent(event2.id);\r",
+											"        event3 = await api.publishEvent(event3.id);\r",
+											"\r",
+											"        const submittedUser = await api.addUser(rnd.getUser());\r",
+											"        const requestToJoin1 = await api.publishParticipationRequest(event1.id, submittedUser.id);\r",
+											"        const requestToJoin2 = await api.publishParticipationRequest(event2.id, submittedUser.id);\r",
+											"        const requestToJoin3 = await api.publishParticipationRequest(event3.id, submittedUser.id);\r",
+											"        pm.collectionVariables.set(\"userId\", Number(submittedUser.id))\r",
+											"\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"\r",
+											"    let location;\r",
+											"    try {\r",
+											"        location = rnd.getLocation();\r",
+											"        location = await api.addLocation(location);\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function () {\r",
+											"    pm.response.to.be.badRequest;    \r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/:userId/events/locations?isNearLastVisited=true&isNearFavorite=true",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":userId",
+										"events",
+										"locations"
+									],
+									"query": [
+										{
+											"key": "isNearLastVisited",
+											"value": "true"
+										},
+										{
+											"key": "isNearFavorite",
+											"value": "true"
+										}
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										}
+									]
+								},
+								"description": "Обратите внимание: имя категории должно быть уникальным"
+							},
+							"response": []
+						},
+						{
+							"name": "Получить события пользователя не выбрав свойства точки",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        pm.collectionVariables.set(\"uid\", user.id)\r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        let event1 = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        let event2 = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        let event3 = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        event1 = await api.publishEvent(event1.id);\r",
+											"        event2 = await api.publishEvent(event2.id);\r",
+											"        event3 = await api.publishEvent(event3.id);\r",
+											"\r",
+											"        const submittedUser = await api.addUser(rnd.getUser());\r",
+											"        const requestToJoin1 = await api.publishParticipationRequest(event1.id, submittedUser.id);\r",
+											"        const requestToJoin2 = await api.publishParticipationRequest(event2.id, submittedUser.id);\r",
+											"        const requestToJoin3 = await api.publishParticipationRequest(event3.id, submittedUser.id);\r",
+											"        pm.collectionVariables.set(\"userId\", Number(submittedUser.id))\r",
+											"\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"\r",
+											"    let location;\r",
+											"    try {\r",
+											"        location = rnd.getLocation();\r",
+											"        location = await api.addLocation(location);\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function () {\r",
+											"    pm.response.to.be.badRequest;    \r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/:userId/events/locations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":userId",
+										"events",
+										"locations"
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										}
+									]
+								},
+								"description": "Обратите внимание: имя категории должно быть уникальным"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Unauthorized Get Events Near Location",
+					"item": [
+						{
+							"name": "Получить события рядом с точкой",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        pm.collectionVariables.set(\"uid\", user.id)\r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        let event1 = await api.addEvent(user.id, rnd.getEventWithLocation(151, 151, category.id));\r",
+											"        let event2 = await api.addEvent(user.id, rnd.getEventWithLocation(749, -3, category.id));\r",
+											"        let event3 = await api.addEvent(user.id, rnd.getEventWithLocation(140, 140, category.id));\r",
+											"        event1 = await api.publishEvent(event1.id);\r",
+											"        event2 = await api.publishEvent(event2.id);\r",
+											"        event3 = await api.publishEvent(event3.id);\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											"\r",
+											"const target = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Событий должно быть только 2. Это события происходящие близко от поисковой точки\", function () {\r",
+											"    pm.expect(target.length).equal(2);\r",
+											"    pm.expect(target[0].location.lat).equal(151);\r",
+											"    pm.expect(target[1].location.lon).equal(140);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/events?latitude=150&longitude=150&maxDistance=2000",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"events"
+									],
+									"query": [
+										{
+											"key": "latitude",
+											"value": "150"
+										},
+										{
+											"key": "longitude",
+											"value": "150"
+										},
+										{
+											"key": "maxDistance",
+											"value": "2000"
+										}
+									]
+								},
+								"description": "Обратите внимание: имя категории должно быть уникальным"
+							},
+							"response": []
+						},
+						{
+							"name": "Получить события рядом с точкой забыв указать одну из координат",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        pm.collectionVariables.set(\"uid\", user.id)\r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        let event1 = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        let event2 = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        let event3 = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        event1 = await api.publishEvent(event1.id);\r",
+											"        event2 = await api.publishEvent(event2.id);\r",
+											"        event3 = await api.publishEvent(event3.id);\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+											"    pm.response.to.be.badRequest;    \r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/events?latitude=150&maxDistance=2000",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"events"
+									],
+									"query": [
+										{
+											"key": "latitude",
+											"value": "150"
+										},
+										{
+											"key": "maxDistance",
+											"value": "2000"
+										}
+									]
+								},
+								"description": "Обратите внимание: имя категории должно быть уникальным"
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Admin Patch Location",
 					"item": [
 						{
@@ -1283,6 +2053,10 @@
 		},
 		{
 			"key": "10",
+			"value": ""
+		},
+		{
+			"key": "userId",
 			"value": ""
 		}
 	]
