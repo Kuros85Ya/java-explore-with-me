@@ -331,6 +331,265 @@
 					]
 				},
 				{
+					"name": "Admin Create Compilation By Location",
+					"item": [
+						{
+							"name": "Добавление новой компиляции событий, находящихся близко от искомой точки",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    class GetLocation {\r",
+											"    getLocation() {\r",
+											"        return {\r",
+											"            description: pm.variables.replaceIn('{{$randomFullName}}'),\r",
+											"            latitude: 10,\r",
+											"            longitude: -10\r",
+											"        };\r",
+											"    }\r",
+											"    }\r",
+											"    const loc = new GetLocation();\r",
+											"\r",
+											"    let location;\r",
+											"    try {\r",
+											"        location = loc.getLocation();\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"\r",
+											"    try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        pm.collectionVariables.set(\"uid\", user.id)\r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        let event1 = await api.addEvent(user.id, rnd.getEventWithLocation(11, -11, category.id));\r",
+											"        let event2 = await api.addEvent(user.id, rnd.getEventWithLocation(9, -8, category.id));\r",
+											"        let event3 = await api.addEvent(user.id, rnd.getEventWithLocation(1000, -1000, category.id));\r",
+											"\r",
+											"        event1 = await api.publishEvent(event1.id);\r",
+											"        event2 = await api.publishEvent(event2.id);\r",
+											"        event3 = await api.publishEvent(event3.id);\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"\r",
+											"    try {\r",
+											"        location = await api.addLocation(location);\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"    pm.collectionVariables.set(\"locationId\", Number(location.id))\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											"\r",
+											"const target = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Подборка должны содержать поля: id, title, pinned, events\", function () {\r",
+											"pm.expect(target).to.have.property('id');\r",
+											"pm.expect(target).to.have.property('title');\r",
+											"pm.expect(target).to.have.property('pinned');\r",
+											"pm.expect(target).to.have.property('events');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Событий должно быть только 2. Это события происходящие близко от поисковой точки\", function () {\r",
+											"    pm.expect(target.events.length).equal(2);\r",
+											"    pm.expect(target.events[0].location.lat).equal(11);\r",
+											"    pm.expect(target.events[1].location.lon).equal(-8);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/admin/locations/:locationId/compilation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"locations",
+										":locationId",
+										"compilation"
+									],
+									"variable": [
+										{
+											"key": "locationId",
+											"value": "{{locationId}}"
+										}
+									]
+								},
+								"description": "Обратите внимание: имя категории должно быть уникальным"
+							},
+							"response": []
+						},
+						{
+							"name": "Добавление новой компиляции событий на основе несуществующей локации",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    let location;\r",
+											"    try {\r",
+											"        location = rnd.getLocation();\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"\r",
+											"    try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        pm.collectionVariables.set(\"uid\", user.id)\r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        let event1 = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        event1 = await api.publishEvent(event1.id);\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"\r",
+											"    try {\r",
+											"        location = await api.addLocation(location);\r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"    pm.collectionVariables.set(\"locationId\", Number(location.id + 2))\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function () {\r",
+											"    pm.response.to.be.notFound;    \r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/admin/locations/:locationId/compilation",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"locations",
+										":locationId",
+										"compilation"
+									],
+									"variable": [
+										{
+											"key": "locationId",
+											"value": "{{locationId}}"
+										}
+									]
+								},
+								"description": "Обратите внимание: имя категории должно быть уникальным"
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Admin Patch Location",
 					"item": [
 						{
@@ -852,6 +1111,23 @@
 					"            location: {",
 					"                lat: parseFloat(pm.variables.replaceIn('{{$randomLatitude}}')),",
 					"                lon: parseFloat(pm.variables.replaceIn('{{$randomLongitude}}')),",
+					"            },",
+					"            paid: pm.variables.replaceIn('{{$randomBoolean}}'),",
+					"            participantLimit: pm.variables.replaceIn('{{$randomInt}}'),",
+					"            requestModeration: pm.variables.replaceIn('{{$randomBoolean}}'),",
+					"            title: pm.variables.replaceIn('{{$randomLoremSentence}}'),",
+					"        }",
+					"    }",
+					"",
+					"    getEventWithLocation(latitude, longitude, categoryId) {",
+					"        return {",
+					"            annotation: pm.variables.replaceIn('{{$randomLoremParagraph}}'),",
+					"            category: categoryId,",
+					"            description: pm.variables.replaceIn('{{$randomLoremParagraphs}}'),",
+					"            eventDate: this.getFutureDateTime(),",
+					"            location: {",
+					"                lat: latitude,",
+					"                lon: longitude,",
 					"            },",
 					"            paid: pm.variables.replaceIn('{{$randomBoolean}}'),",
 					"            participantLimit: pm.variables.replaceIn('{{$randomInt}}'),",

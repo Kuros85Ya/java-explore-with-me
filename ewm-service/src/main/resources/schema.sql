@@ -48,7 +48,7 @@ comment on table users is 'Пользователи';
 comment on column users.id is 'Идентификатор пользователя';
 comment on column users.name is 'Имя пользователя';
 comment on column users.email is 'Электронная почта пользователя';
-comment on column users.favorite_location_id is 'Любимая локация пользователя (например, дом)';
+comment on column users.favorite_location_id is 'Любимая точка пользователя (на основе ранее посещенных событий)';
 comment on column users.last_visited_location_id is 'Локация последнего посещенного пользователем события';
 
 ---

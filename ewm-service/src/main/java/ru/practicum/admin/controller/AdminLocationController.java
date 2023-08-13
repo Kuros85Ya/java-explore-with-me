@@ -35,9 +35,10 @@ public class AdminLocationController {
         return service.patchLocation(locationId, requestDto);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{locationId}/compilation")
-    public CompilationResponseDto createCompilationByLocationId(@PathVariable Long locationId, @RequestParam(defaultValue = "100") Long maxDistance, @RequestParam(required = false) String compilationDescription, @RequestParam(defaultValue = "false") Boolean pinned) {
-        log.info("Создание компиляции из событий находящихся близко с выбранным");
+    public CompilationResponseDto createCompilationByLocationId(@PathVariable Long locationId, @RequestParam(defaultValue = "1000") Long maxDistance, @RequestParam(required = false) String compilationDescription, @RequestParam(defaultValue = "false") Boolean pinned) {
+        log.info("Создание компиляции из событий находящихся близко с выбранной точкой");
         return service.createCompilationByLocationId(locationId, maxDistance, compilationDescription, pinned);
     }
 }
