@@ -39,17 +39,13 @@ create table if not exists users
     name varchar not null,
     email varchar unique not null,
     favorite_location_id bigint default null,
-    last_visited_location_id bigint default null,
-    CONSTRAINT fk_users_to_favorite_locations FOREIGN KEY(favorite_location_id) REFERENCES locations(id),
-    CONSTRAINT fk_users_to_visited_locations FOREIGN KEY(last_visited_location_id) REFERENCES locations(id)
+    last_visited_location_id bigint default null
 );
 
 comment on table users is 'Пользователи';
 comment on column users.id is 'Идентификатор пользователя';
 comment on column users.name is 'Имя пользователя';
 comment on column users.email is 'Электронная почта пользователя';
-comment on column users.favorite_location_id is 'Любимая точка пользователя (на основе ранее посещенных событий)';
-comment on column users.last_visited_location_id is 'Локация последнего посещенного пользователем события';
 
 ---
 create table if not exists events

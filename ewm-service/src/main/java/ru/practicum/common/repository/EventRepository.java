@@ -97,7 +97,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Event getEventByIdAndCreator(Long id, User creator);
 
     @Query("select e from Event as e " +
-            "join Request r on r.event.id = r.id " +
+            "join Request r on r.event.id = r.event.id " +
             "where r.requester.id = :userId " +
             "order by r.created desc ")
     List<Event> getVisitedEventsByUserId(Long userId);
