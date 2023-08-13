@@ -424,8 +424,8 @@
 											"\r",
 											"pm.test(\"Событий должно быть только 2. Это события происходящие близко от поисковой точки\", function () {\r",
 											"    pm.expect(target.events.length)>= 2;\r",
-											"    pm.expect(target.some(it=> it.location.lat == 11)).to.be.true;\r",
-											"    pm.expect(target.some(it=> it.location.lon == -8)).to.be.true;\r",
+											"    pm.expect(target.events.some(it=> it.location.lat == 11)).to.be.true;\r",
+											"    pm.expect(target.events.some(it=> it.location.lon == -8)).to.be.true;\r",
 											"});"
 										],
 										"type": "text/javascript"
