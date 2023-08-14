@@ -13,6 +13,8 @@ import java.util.List;
 public interface AuthorizedEventService {
     List<CommonSingleEventResponse> getEventsByUserId(Long id, PageRequest pageRequest);
 
+    List<CommonSingleEventResponse> getEventsByUserLocation(Long userId, Boolean isNearFavorite, Boolean isNearLastVisited, Long maxValue, PageRequest pageRequest);
+
     CommonSingleEventResponse createEvent(Long userId, AuthorizedEventRequestDto requestDto);
 
     CommonSingleEventResponse getUserEventByEventId(Long userId, Long eventId);

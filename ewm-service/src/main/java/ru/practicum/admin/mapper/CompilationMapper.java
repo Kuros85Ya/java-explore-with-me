@@ -23,6 +23,15 @@ public class CompilationMapper {
         );
     }
 
+    public static Compilation eventsToCompilation(List<Event> events, String title, Boolean pinned) {
+        return new Compilation(
+                null,
+                title,
+                pinned,
+                events
+        );
+    }
+
     public static CompilationResponseDto toCompilationResponseDto(Compilation compilation, Map<Long, Long> eventViews) {
         List<CommonSingleEventResponse> events = compilation
                 .getEvents()

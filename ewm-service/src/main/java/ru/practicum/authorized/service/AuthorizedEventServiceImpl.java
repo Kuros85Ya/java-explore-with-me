@@ -15,14 +15,9 @@ import ru.practicum.common.dto.CommonSingleEventResponse;
 import ru.practicum.common.enums.EventState;
 import ru.practicum.common.enums.RequestStatus;
 import ru.practicum.common.mapper.EventMapper;
-import ru.practicum.common.model.Category;
-import ru.practicum.common.model.Event;
-import ru.practicum.common.model.Request;
-import ru.practicum.common.model.User;
-import ru.practicum.common.repository.CategoryRepository;
-import ru.practicum.common.repository.EventRepository;
-import ru.practicum.common.repository.RequestRepository;
-import ru.practicum.common.repository.UserRepository;
+import ru.practicum.common.mapper.LocationMapper;
+import ru.practicum.common.model.*;
+import ru.practicum.common.repository.*;
 import ru.practicum.unauthorized.service.StatsService;
 
 import javax.validation.ValidationException;
@@ -39,6 +34,7 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
+    private final LocationRepository locationRepository;
     private final StatsService service;
 
     @Override
@@ -54,12 +50,34 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
     }
 
     @Override
+    public List<CommonSingleEventResponse> getEventsByUserLocation(Long userId, Boolean isNearFavorite, Boolean isNearLastVisited, Long maxValue, PageRequest pageRequest) {
+        User creator = findUserById(userId);
+        AverageLocation location = getLocationOfInterestByUserId(creator.getId(), isNearFavorite, isNearLastVisited);
+        List<Event> events = repository.getEventsByLocationPageable(location.getLatitude().floatValue(), location.getLongitude().floatValue(), maxValue, pageRequest);
+        Map<Long, Long> eventViews = service.getListEventViews(events);
+        return events
+                .stream()
+                .map(it -> EventMapper.toEventResponseDto(it, eventViews.get(it.getId())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public CommonSingleEventResponse createEvent(Long userId, AuthorizedEventRequestDto requestDto) {
         User user = findUserById(userId);
         Category category = findCategoryById(requestDto.getCategory());
+        Location newLocation = getLocation(requestDto.getLocation());
 
-        Event event = repository.save(EventMapper.toEvent(user, category, requestDto));
+        Event event = repository.save(EventMapper.toEvent(user, category, requestDto, newLocation));
         return EventMapper.toEventResponseDto(event, 0L);
+    }
+
+    public Location getLocation(ru.practicum.common.dto.Location location) {
+        if (location == null) {
+            return null;
+        } else {
+            Location existingLocation = locationRepository.getLocationByLatitudeAndLongitude(location.getLat(), location.getLon());
+            return Objects.requireNonNullElseGet(existingLocation, () -> locationRepository.save(LocationMapper.toLocation(location)));
+        }
     }
 
     @Override
@@ -82,7 +100,9 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
             category = findCategoryById(requestDto.getCategory());
         }
 
-        Event modifiedEvent = EventMapper.patchRequestToEvent(event, category, requestDto);
+        Location location = getLocation(requestDto.getLocation());
+
+        Event modifiedEvent = EventMapper.patchRequestToEvent(event, category, requestDto, location);
         Long views = service.getEventView(modifiedEvent);
         return EventMapper.toEventResponseDto(modifiedEvent, views);
     }
@@ -178,6 +198,30 @@ public class AuthorizedEventServiceImpl implements AuthorizedEventService {
             modifiedRequests.add(RequestMapper.toChangedStatusPatchRequest(r, RequestStatus.REJECTED));
         }
         return modifiedRequests;
+    }
+
+    private AverageLocation getLocationOfInterestByUserId(Long userId, Boolean isFavorite, Boolean isLastVisited) {
+        AverageLocation averageLocation;
+
+        if (isFavorite && isLastVisited) {
+            throw new ValidationException("Нужно выбрать один признак для поиска isNearFavorite или isNearLastVisited, а не оба одновременно");
+        } else if (isFavorite) {
+            averageLocation = locationRepository.getFavoriteLocationByUserId(userId);
+            if (averageLocation == null) {
+                throw new NoSuchElementException("Нет информации о локации пользователя. Нужно отправить заявку на участие хотя бы в одном событии");
+            }
+        } else if (isLastVisited) {
+            List<Event> lastVisitedEvents = repository.getVisitedEventsByUserId(userId);
+            if (lastVisitedEvents == null || lastVisitedEvents.isEmpty()) {
+                throw new NoSuchElementException("Нет информации о локации пользователя. Нужно отправить заявку на участие хотя бы в одном событии");
+            } else {
+                Event lastVisitedEvent = lastVisitedEvents.get(0);
+                averageLocation = new AverageLocation(lastVisitedEvent.getLocation().getLatitude().doubleValue(), lastVisitedEvent.getLocation().getLongitude().doubleValue());
+            }
+        } else {
+            throw new ValidationException("Нужно выбрать хотя бы один признак для поиска isNearFavorite или isNearLastVisited");
+        }
+        return averageLocation;
     }
 
     private void validateUserIsCreator(Long userId, Event event) {

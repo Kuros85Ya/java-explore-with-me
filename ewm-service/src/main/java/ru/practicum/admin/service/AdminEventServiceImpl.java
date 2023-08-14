@@ -13,6 +13,7 @@ import ru.practicum.common.enums.StateAction;
 import ru.practicum.common.mapper.EventMapper;
 import ru.practicum.common.model.Category;
 import ru.practicum.common.model.Event;
+import ru.practicum.common.model.Location;
 import ru.practicum.common.repository.EventRepository;
 import ru.practicum.unauthorized.service.StatsService;
 
@@ -71,9 +72,10 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
 
         Category category = service.findCategoryById(categoryId);
+        Location location = service.getLocation(requestDto.getLocation());
 
         validateEvent(event, requestDto.getStateAction());
-        Event modifiedEvent = EventMapper.patchRequestToEvent(event, category, requestDto);
+        Event modifiedEvent = EventMapper.patchRequestToEvent(event, category, requestDto, location);
         repository.save(modifiedEvent);
         Long views = statsService.getEventView(modifiedEvent);
         return EventMapper.toEventResponseDto(modifiedEvent, views);

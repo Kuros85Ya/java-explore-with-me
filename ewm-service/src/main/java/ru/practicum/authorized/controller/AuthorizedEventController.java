@@ -37,6 +37,18 @@ public class AuthorizedEventController {
         return service.getEventsByUserId(userId, pageRequest);
     }
 
+    @GetMapping("/{userId}/events/locations")
+    public List<CommonSingleEventResponse> getEventsNearLocationByUserId(@PathVariable Long userId,
+                                                            @RequestParam(defaultValue = "false") Boolean isNearFavorite,
+                                                            @RequestParam(defaultValue = "false") Boolean isNearLastVisited,
+                                                            @RequestParam(defaultValue = "1000") Long maxDistance,
+                                                            @RequestParam(defaultValue = "0") Integer from,
+                                                            @RequestParam(defaultValue = "10") Integer size) {
+        log.info("Запрос авторизованным пользователем событий по userId = {}, from = {}, size = {}", userId, from, size);
+        PageRequest pageRequest = toPageRequest(from, size);
+        return service.getEventsByUserLocation(userId, isNearFavorite, isNearLastVisited, maxDistance, pageRequest);
+    }
+
     @PostMapping("/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
     public CommonSingleEventResponse addEvent(@PathVariable Long userId,
